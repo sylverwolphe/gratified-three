@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gratified — Main Library Cafe</title>
+    <meta name="description" content="coffee + art">
+    <title>Gratified  |  coffee + art</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='8' y='8' width='16' height='16' fill='%23722F37' transform='rotate(45 16 16)'/><rect x='10' y='10' width='12' height='12' fill='%23722F37' transform='rotate(45 16 16)'/></svg>">
     <link href="https://api.fontshare.com/v2/css?f[]=Satoshi@1&display=swap" rel="stylesheet">
     <style>
         @font-face {
@@ -11,6 +13,21 @@
             src: url('fonts/BluuNext-Bold.otf') format('opentype');
             font-weight: bold;
             font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Switzer';
+            src: url('fonts/Switzer-Light.otf') format('opentype');
+            font-weight: 300;
+            font-display: swap;
+        }
+
+        h1, h2, h3, .section-title, .logo, .logobot {
+            font-family: 'BluuNext', serif;
+        }
+
+        body, p {
+            font-family: 'Satoshi', sans-serif;
         }
 
         :root {
@@ -21,36 +38,42 @@
             --cream: #EDE8E0;
             --charcoal: #3C3C3C;
             --golden-sand: #E6C89C;
+
+            --theme-accent: var(--deep-red);
+            --section-bg: rgba(237, 232, 224, 0.8);
+            --card-bg: rgba(230, 200, 156, 0.3);
+            --card-bg-hover: rgba(204, 85, 0, 0.2);
+            --modal-bg: #EDE8E0;
+
+            --drink-nav-color-1: #722F37;
+            --drink-nav-color-2: #CC5500;
+            --drink-nav-color-3: #D2691E;
+            --drink-nav-color-4: #6B5740;
+            --drink-nav-color-5: #E6C89C;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         html {
             scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Satoshi', sans-serif;
-            background: var(--cream);
+            background-color: var(--cream);
             background-image:
                 radial-gradient(circle at 25% 25%, rgba(114, 47, 55, 0.03) 0%, transparent 50%),
                 radial-gradient(circle at 75% 75%, rgba(204, 85, 0, 0.02) 0%, transparent 50%);
             color: var(--charcoal);
-            line-height: 1.7;
+            line-height: 1.8;
+            font-weight: 400;
+            min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Grain overlay */
+        /* ===== GRAIN OVERLAY ===== */
         .grain-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
             z-index: 9999;
             opacity: 0.06;
@@ -60,6 +83,18 @@
             animation: grainShift 0.5s steps(4) infinite;
         }
 
+        .ancient-pattern {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.015;
+            background-image:
+                radial-gradient(circle at 25% 25%, var(--deep-red) 0%, transparent 2%),
+                radial-gradient(circle at 75% 75%, var(--bright-orange) 0%, transparent 2%);
+            background-size: 24px 24px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
         @keyframes grainShift {
             0%, 100% { transform: translate(0, 0); }
             25% { transform: translate(-2px, 2px); }
@@ -67,214 +102,361 @@
             75% { transform: translate(-2px, -2px); }
         }
 
-        /* Navigation */
-        nav {
+        /* ===== ICON NAVIGATION (desktop) ===== */
+        .main-nav {
             position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 1.2rem 2.5rem;
+            top: 20px;
+            left: 50%;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 0;
             z-index: 1000;
-            transition: all 0.4s ease;
-            background: transparent;
+            background-color: var(--modal-bg);
+            padding: 0;
+            border: 3px solid var(--theme-accent);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+            animation: navFadeIn 1s ease 0.3s both;
         }
 
-        nav.scrolled {
-            background: rgba(237, 232, 224, 0.97);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 1px 30px rgba(0,0,0,0.06);
-            border-bottom: 2px solid rgba(114, 47, 55, 0.15);
+        @keyframes navFadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
-        .logo {
-            font-family: 'BluuNext', serif;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--deep-red);
-            text-decoration: none;
-            letter-spacing: 1px;
-        }
-
-        .nav-links {
+        .nav-link {
             display: flex;
-            gap: 2.5rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             color: var(--charcoal);
-            font-weight: 500;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-            text-transform: lowercase;
-            transition: color 0.3s ease;
-            position: relative;
+            text-decoration: none;
+            padding: 16px 20px;
+            transition: all 0.3s ease;
+            min-width: 70px;
         }
 
-        .nav-links a:hover {
-            color: var(--bright-orange);
-        }
+        .nav-link:hover { background-color: var(--card-bg-hover); }
+        .nav-link:active { transform: scale(0.95); }
+        .nav-link.active { background-color: var(--card-bg); }
 
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--bright-orange);
-            transition: width 0.3s ease;
-        }
+        .nav-icon { font-size: 32px; transition: color 0.3s ease; }
 
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--deep-red);
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
+        .nav-icon.icon-dash,
+        .nav-icon.icon-equal {
+            font-size: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            background: var(--deep-red);
-            overflow: hidden;
-        }
-
-        .hero-diamond {
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: var(--bright-orange);
-            transform: rotate(45deg);
-            opacity: 0.15;
-            top: 50%;
-            left: 50%;
-            margin-top: -250px;
-            margin-left: -250px;
-            animation: diamondPulse 6s ease-in-out infinite;
-        }
-
-        .hero-diamond-inner {
-            position: absolute;
-            width: 350px;
-            height: 350px;
-            background: var(--warm-amber);
-            transform: rotate(45deg);
-            opacity: 0.1;
-            top: 50%;
-            left: 50%;
-            margin-top: -175px;
-            margin-left: -175px;
-            animation: diamondPulse 6s ease-in-out infinite 1s;
-        }
-
-        @keyframes diamondPulse {
-            0%, 100% { transform: rotate(45deg) scale(1); opacity: 0.15; }
-            50% { transform: rotate(45deg) scale(1.05); opacity: 0.2; }
-        }
-
-        .hero-content {
-            text-align: center;
-            color: var(--cream);
-            z-index: 2;
-            padding: 2rem;
-            max-width: 700px;
-        }
-
-        .hero h1 {
-            font-family: 'BluuNext', serif;
-            font-size: clamp(5rem, 15vw, 10rem);
-            font-weight: 700;
-            line-height: 0.9;
-            margin-bottom: 1.5rem;
-            animation: fadeInUp 1s ease 0.2s both;
-            letter-spacing: 2px;
-        }
-
-        .hero-subtitle {
-            font-family: 'Satoshi', sans-serif;
-            font-size: clamp(1.2rem, 3vw, 1.6rem);
-            font-weight: 300;
-            opacity: 0.7;
-            letter-spacing: 6px;
-            text-transform: lowercase;
-            animation: fadeInUp 1s ease 0.5s both;
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: bounce 2s infinite;
-        }
-
-        .scroll-indicator svg {
-            width: 24px;
             height: 24px;
-            stroke: var(--cream);
-            opacity: 0.5;
         }
 
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-            40% { transform: translateX(-50%) translateY(-10px); }
-            60% { transform: translateX(-50%) translateY(-5px); }
+        .nav-icon.icon-dash::before {
+            content: '';
+            display: block;
+            width: 20px;
+            height: 3px;
+            background-color: var(--drink-nav-color-1);
+            border-radius: 1px;
+            transition: background-color 0.4s ease;
         }
+
+        .nav-icon.icon-equal::before {
+            content: '';
+            display: block;
+            width: 20px;
+            height: 3px;
+            background-color: var(--drink-nav-color-2);
+            border-radius: 1px;
+            box-shadow: 0 6px 0 var(--drink-nav-color-2);
+            transform: translateY(-3px);
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .nav-icon.icon-diamond {
+            color: var(--drink-nav-color-3);
+            width: 24px; height: 24px;
+            transform: rotate(45deg) scale(0.7);
+            transition: color 0.4s ease;
+        }
+
+        .nav-icon.icon-square {
+            color: var(--drink-nav-color-4);
+            width: 24px; height: 24px;
+            transform: scale(0.7);
+            transition: color 0.4s ease;
+        }
+
+        .nav-icon.icon-pentagon {
+            color: var(--drink-nav-color-5);
+            width: 24px; height: 24px;
+            transform: scale(0.7);
+            transition: color 0.4s ease;
+        }
+
+        /* ===== MOBILE BOTTOM NAV ===== */
+        .mobile-navbar {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background-color: var(--modal-bg);
+            border-top: 3px solid var(--theme-accent);
+            padding: 8px 0;
+            padding-bottom: calc(8px + env(safe-area-inset-bottom));
+            z-index: 999;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--charcoal);
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            min-width: 60px;
+        }
+
+        .mobile-nav-item:active {
+            background-color: var(--card-bg-hover);
+            transform: scale(0.95);
+        }
+
+        .mobile-nav-item.active {
+            background-color: var(--card-bg);
+        }
+
+        .mobile-nav-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px; height: 32px;
+        }
+
+        .mobile-nav-icon.icon-dash,
+        .mobile-nav-icon.icon-equal { font-size: 0; }
+
+        .mobile-nav-icon.icon-dash::before {
+            content: '';
+            display: block;
+            width: 20px; height: 3px;
+            background-color: var(--drink-nav-color-1);
+            border-radius: 1px;
+            transition: background-color 0.4s ease;
+        }
+
+        .mobile-nav-icon.icon-equal::before {
+            content: '';
+            display: block;
+            width: 20px; height: 3px;
+            background-color: var(--drink-nav-color-2);
+            border-radius: 1px;
+            box-shadow: 0 6px 0 var(--drink-nav-color-2);
+            transform: translateY(-3px);
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .mobile-nav-icon.icon-diamond {
+            color: var(--drink-nav-color-3);
+            width: 24px; height: 24px;
+            transform: rotate(45deg);
+            transition: color 0.4s ease;
+        }
+
+        .mobile-nav-icon.icon-square {
+            color: var(--drink-nav-color-4);
+            width: 24px; height: 24px;
+            transition: color 0.4s ease;
+        }
+
+        .mobile-nav-icon.icon-pentagon {
+            color: var(--drink-nav-color-5);
+            width: 24px; height: 24px;
+            transition: color 0.4s ease;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-navbar { display: flex; }
+            .main-nav { display: none; }
+            html { scroll-padding-bottom: 80px; }
+            body { padding-bottom: 80px; }
+        }
+
+        /* ===== PAGES CONTAINER ===== */
+        .pages-container { position: relative; }
+
+        @media (min-width: 769px) {
+            .pages-container { padding-top: 70px; }
+        }
+
+        /* ===== LANDING PAGE ===== */
+        .landing-page {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .landing-container {
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 769px) {
+            .landing-container { padding-top: 20px; }
+        }
+
+        .landing-hero { max-width: 700px; }
+
+        .landing-tagline {
+            font-size: clamp(16px, 3vw, 28px);
+            color: var(--olive-bronze);
+            font-weight: 400;
+            letter-spacing: clamp(2px, 0.4vw, 4px);
+            animation: fadeInUp 1s ease 0.1s both;
+        }
+
+        .landing-logo {
+            font-size: clamp(72px, 12vw, 96px);
+            font-weight: 700;
+            letter-spacing: clamp(3px, 0.8vw, 8px);
+            color: var(--theme-accent);
+            margin-bottom: clamp(8px, 1.5vw, 15px);
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .landing-logobot {
+            font-size: clamp(20px, 4vw, 36px);
+            color: var(--theme-accent);
+            letter-spacing: 2px;
+            word-spacing: 5px;
+            margin-top: -40px;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .landing-diamond {
+            width: 100px; height: 100px;
+            margin: 0 auto 40px;
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .diamond-svg { width: 100%; height: 100%; }
+
+        .diamond-fill {
+            opacity: 0;
+            animation: fillDiamond 0.8s ease 1.8s forwards;
+        }
+
+        .diamond-stroke {
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            animation: drawDiamond 1.5s ease 0.5s forwards;
+        }
+
+        @keyframes drawDiamond { to { stroke-dashoffset: 0; } }
+        @keyframes fillDiamond { to { opacity: 1; } }
 
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Section Styles */
-        section {
-            padding: 7rem 2rem;
-            max-width: 1100px;
-            margin: 0 auto;
+        @media (max-width: 768px) {
+            .landing-container {
+                height: calc(100vh - 70px);
+                padding: 20px;
+            }
+            .landing-logo { font-size: 48px; }
+            .landing-tagline { font-size: 22px; margin-bottom: 20px; }
+        }
+
+        /* ===== SECTION STYLES ===== */
+        .section {
+            --drink-accent: var(--theme-accent);
+            background-color: var(--section-bg);
+            padding: clamp(20px, 4vw, 45px);
+            margin-bottom: clamp(20px, 4vw, 35px);
             position: relative;
+            box-shadow:
+                inset 0 0 20px rgba(114, 47, 55, 0.05),
+                0 2px 8px rgba(60, 60, 60, 0.08);
         }
 
-        .section-header {
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 15px; right: 15px; bottom: 15px; left: 15px;
+            border: 2px solid var(--drink-accent);
+            opacity: 0.3;
+            pointer-events: none;
+            transition: border-color 0.4s ease;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: clamp(30px, 5vw, 60px) clamp(20px, 4vw, 40px);
+        }
+
+        .header {
             text-align: center;
-            margin-bottom: 4rem;
+            margin-bottom: clamp(40px, 8vw, 80px);
+            padding: clamp(20px, 4vw, 40px) 0;
         }
 
-        .section-header h2 {
-            font-family: 'BluuNext', serif;
-            font-size: clamp(2.2rem, 5vw, 3.5rem);
-            color: var(--deep-red);
-            margin-bottom: 1rem;
+        .logo {
+            font-size: clamp(42px, 8vw, 72px);
             font-weight: 700;
+            letter-spacing: clamp(3px, 0.8vw, 8px);
+            color: var(--theme-accent);
+            margin-bottom: clamp(8px, 1.5vw, 15px);
+        }
+
+        .tagline {
+            font-size: clamp(16px, 3vw, 28px);
+            color: var(--olive-bronze);
+            font-weight: 400;
+            letter-spacing: clamp(2px, 0.4vw, 4px);
+        }
+
+        .pricing-note {
+            font-size: 13px;
+            color: var(--olive-bronze);
+            opacity: 0.7;
+            margin-top: 6px;
             letter-spacing: 1px;
         }
 
-        .section-header p {
-            font-size: 1.05rem;
+        .section-title {
+            font-size: clamp(22px, 4vw, 32px);
+            margin-bottom: clamp(15px, 3vw, 25px);
+            color: var(--theme-accent);
+            font-weight: 700;
+            letter-spacing: clamp(1px, 0.2vw, 2px);
+            text-align: center;
+        }
+
+        .section-intro {
+            text-align: center;
             color: var(--olive-bronze);
-            max-width: 550px;
-            margin: 0 auto;
-            font-weight: 400;
+            font-size: clamp(15px, 2.5vw, 18px);
+            max-width: 600px;
+            margin: 0 auto clamp(20px, 4vw, 40px);
+            line-height: 1.7;
         }
 
-        /* Story Section */
-        .story-section {
-            background: var(--cream);
-        }
-
+        /* ===== STORY SECTION ===== */
         .story-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -283,24 +465,20 @@
         }
 
         .story-text h3 {
-            font-family: 'BluuNext', serif;
             font-size: 1.5rem;
-            color: var(--deep-red);
+            color: var(--theme-accent);
             margin-bottom: 1.2rem;
             font-weight: 700;
             letter-spacing: 0.5px;
             margin-top: 2.5rem;
         }
 
-        .story-text h3:first-child {
-            margin-top: 0;
-        }
+        .story-text h3:first-child { margin-top: 0; }
 
         .story-text p {
             margin-bottom: 1.2rem;
             font-size: 1rem;
             line-height: 1.8;
-            color: var(--charcoal);
             opacity: 0.85;
         }
 
@@ -319,27 +497,23 @@
         .value-item {
             text-align: center;
             padding: 1.5rem 1rem;
-            border: 2px solid var(--deep-red);
+            border: 2px solid var(--theme-accent);
             position: relative;
         }
 
         .value-item::before {
             content: '';
             position: absolute;
-            top: 6px;
-            right: 6px;
-            bottom: 6px;
-            left: 6px;
-            border: 1px solid var(--deep-red);
+            top: 6px; right: 6px; bottom: 6px; left: 6px;
+            border: 1px solid var(--theme-accent);
             opacity: 0.25;
             pointer-events: none;
         }
 
         .value-item .value-word {
-            font-family: 'BluuNext', serif;
             font-size: 1.3rem;
             font-weight: 700;
-            color: var(--deep-red);
+            color: var(--theme-accent);
             letter-spacing: 0.5px;
             margin-bottom: 0.5rem;
         }
@@ -350,24 +524,21 @@
             line-height: 1.5;
         }
 
-        /* Team Image with Hover Thrum */
+        /* Team image */
         .team-image-container {
             position: relative;
             width: 100%;
             aspect-ratio: 1 / 1;
             overflow: hidden;
             cursor: pointer;
-            border: 3px solid var(--deep-red);
+            border: 3px solid var(--theme-accent);
         }
 
         .team-image-container::before {
             content: '';
             position: absolute;
-            top: 8px;
-            right: 8px;
-            bottom: 8px;
-            left: 8px;
-            border: 1px solid var(--deep-red);
+            top: 8px; right: 8px; bottom: 8px; left: 8px;
+            border: 1px solid var(--theme-accent);
             opacity: 0.3;
             pointer-events: none;
             z-index: 5;
@@ -375,28 +546,20 @@
 
         .team-image-container img {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover;
             opacity: 0;
             transition: opacity 0.08s ease;
         }
 
-        .team-image-container img.active {
-            opacity: 1;
-        }
+        .team-image-container img.active { opacity: 1; }
 
         .team-image-container .image-caption {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             padding: 1rem;
             background: linear-gradient(to top, rgba(114, 47, 55, 0.85), transparent);
             color: var(--cream);
-            font-family: 'BluuNext', serif;
             font-size: 0.85rem;
             letter-spacing: 2px;
             text-transform: lowercase;
@@ -404,24 +567,20 @@
             z-index: 10;
         }
 
-        /* Menu Section */
-        .menu-section {
-            background: var(--cream);
-        }
-
+        /* ===== MENU ===== */
         .menu-tabs {
             display: flex;
             justify-content: center;
-            gap: 0.75rem;
-            margin-bottom: 3rem;
+            gap: 0;
+            margin-bottom: clamp(20px, 4vw, 40px);
             flex-wrap: wrap;
         }
 
         .menu-tab {
             padding: 0.7rem 1.8rem;
-            border: 2px solid var(--deep-red);
+            border: 2px solid var(--theme-accent);
             background: transparent;
-            color: var(--deep-red);
+            color: var(--theme-accent);
             cursor: pointer;
             font-family: 'Satoshi', sans-serif;
             font-weight: 600;
@@ -433,7 +592,7 @@
 
         .menu-tab.active,
         .menu-tab:hover {
-            background: var(--deep-red);
+            background: var(--theme-accent);
             color: var(--cream);
             letter-spacing: 1.5px;
         }
@@ -455,11 +614,8 @@
         .menu-item::before {
             content: '';
             position: absolute;
-            top: 6px;
-            right: 6px;
-            bottom: 6px;
-            left: 6px;
-            border: 1px solid var(--deep-red);
+            top: 6px; right: 6px; bottom: 6px; left: 6px;
+            border: 1px solid var(--theme-accent);
             opacity: 0.12;
             pointer-events: none;
             transition: opacity 0.4s ease;
@@ -471,9 +627,7 @@
             border-color: var(--bright-orange);
         }
 
-        .menu-item:hover::before {
-            opacity: 0.3;
-        }
+        .menu-item:hover::before { opacity: 0.3; }
 
         .menu-item-header {
             display: flex;
@@ -485,20 +639,16 @@
         .menu-item-name {
             font-weight: 700;
             font-size: 1rem;
-            color: var(--deep-red);
-            font-family: 'BluuNext', serif;
+            color: var(--theme-accent);
             transition: color 0.3s ease;
         }
 
-        .menu-item:hover .menu-item-name {
-            color: var(--bright-orange);
-        }
+        .menu-item:hover .menu-item-name { color: var(--bright-orange); }
 
         .menu-item-price {
             font-weight: 700;
             color: var(--bright-orange);
             font-size: 1rem;
-            font-family: 'BluuNext', serif;
         }
 
         .menu-item-desc {
@@ -527,29 +677,24 @@
             opacity: 0.6;
         }
 
-        /* Visit Section */
+        /* ===== VISIT SECTION ===== */
         .visit-section {
+            --drink-accent: var(--bright-orange);
             background: var(--deep-red);
             color: var(--cream);
-            position: relative;
-            overflow: hidden;
         }
 
-        .visit-section .section-header h2 {
-            color: var(--cream);
-        }
+        .visit-section .section-title { color: var(--cream); }
+        .visit-section .section-intro { color: var(--cream); opacity: 0.7; }
 
-        .visit-section .section-header p {
-            color: var(--cream);
-            opacity: 0.7;
+        .visit-section::before {
+            border-color: rgba(237, 232, 224, 0.2);
         }
 
         .visit-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
-            position: relative;
-            z-index: 2;
         }
 
         .visit-card {
@@ -564,10 +709,7 @@
         .visit-card::before {
             content: '';
             position: absolute;
-            top: 8px;
-            right: 8px;
-            bottom: 8px;
-            left: 8px;
+            top: 8px; right: 8px; bottom: 8px; left: 8px;
             border: 1px solid rgba(237, 232, 224, 0.1);
             pointer-events: none;
             transition: opacity 0.4s ease;
@@ -580,13 +722,10 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         }
 
-        .visit-card:hover::before {
-            border-color: rgba(204, 85, 0, 0.3);
-        }
+        .visit-card:hover::before { border-color: rgba(204, 85, 0, 0.3); }
 
         .visit-icon {
-            width: 56px;
-            height: 56px;
+            width: 56px; height: 56px;
             margin: 0 auto 1.5rem;
             background: rgba(204, 85, 0, 0.2);
             display: flex;
@@ -596,12 +735,9 @@
             transform: rotate(45deg);
         }
 
-        .visit-icon > * {
-            transform: rotate(-45deg);
-        }
+        .visit-icon > * { transform: rotate(-45deg); }
 
         .visit-card h3 {
-            font-family: 'BluuNext', serif;
             font-size: 1.3rem;
             margin-bottom: 1rem;
             font-weight: 700;
@@ -614,11 +750,7 @@
             line-height: 1.7;
         }
 
-        /* Community Section */
-        .community-section {
-            background: var(--cream);
-        }
-
+        /* ===== COMMUNITY SECTION ===== */
         .community-content {
             text-align: center;
             max-width: 650px;
@@ -629,7 +761,6 @@
             font-size: 1.08rem;
             line-height: 1.9;
             margin-bottom: 1.8rem;
-            color: var(--charcoal);
             opacity: 0.85;
         }
 
@@ -648,7 +779,7 @@
             padding: 0.9rem 1.8rem;
             background: rgba(230, 200, 156, 0.2);
             text-decoration: none;
-            color: var(--deep-red);
+            color: var(--theme-accent);
             font-weight: 600;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             border: 2px solid rgba(114, 47, 55, 0.15);
@@ -660,11 +791,8 @@
         .community-link::before {
             content: '';
             position: absolute;
-            top: 5px;
-            right: 5px;
-            bottom: 5px;
-            left: 5px;
-            border: 1px solid var(--deep-red);
+            top: 5px; right: 5px; bottom: 5px; left: 5px;
+            border: 1px solid var(--theme-accent);
             opacity: 0.12;
             pointer-events: none;
             transition: opacity 0.4s ease;
@@ -677,11 +805,9 @@
             border-color: var(--bright-orange);
         }
 
-        .community-link:hover::before {
-            opacity: 0.3;
-        }
+        .community-link:hover::before { opacity: 0.3; }
 
-        /* Footer */
+        /* ===== FOOTER ===== */
         footer {
             background: var(--charcoal);
             color: var(--cream);
@@ -689,13 +815,9 @@
             text-align: center;
         }
 
-        .footer-content {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
+        .footer-content { max-width: 1100px; margin: 0 auto; }
 
         .footer-logo {
-            font-family: 'BluuNext', serif;
             font-size: 2rem;
             margin-bottom: 0.8rem;
             color: var(--bright-orange);
@@ -710,30 +832,6 @@
             font-size: 1.05rem;
         }
 
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2.5rem;
-            margin-bottom: 2.5rem;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: var(--cream);
-            text-decoration: none;
-            opacity: 0.6;
-            transition: all 0.3s ease;
-            font-size: 0.85rem;
-            text-transform: lowercase;
-            letter-spacing: 1px;
-            font-weight: 500;
-        }
-
-        .footer-links a:hover {
-            opacity: 1;
-            color: var(--bright-orange);
-        }
-
         .footer-bottom {
             border-top: 1px solid rgba(237, 232, 224, 0.08);
             padding-top: 2rem;
@@ -741,46 +839,15 @@
             opacity: 0.4;
         }
 
-        /* Responsive */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .story-grid {
-                grid-template-columns: 1fr;
-                gap: 2.5rem;
-            }
-
-            .values-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .visit-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .menu-grid {
-                grid-template-columns: 1fr;
-            }
-
-            section {
-                padding: 5rem 1.5rem;
-            }
-
-            .hero-diamond {
-                width: 300px;
-                height: 300px;
-                margin-top: -150px;
-                margin-left: -150px;
-            }
+            .story-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+            .values-grid { grid-template-columns: 1fr; }
+            .visit-grid { grid-template-columns: 1fr; }
+            .menu-grid { grid-template-columns: 1fr; }
         }
 
-        /* Intersection Observer Animations */
+        /* ===== FADE-IN ===== */
         .fade-in {
             opacity: 0;
             transform: translateY(25px);
@@ -795,389 +862,295 @@
 </head>
 <body>
     <div class="grain-overlay"></div>
+    <div class="ancient-pattern"></div>
 
-    <!-- Navigation -->
-    <nav id="navbar">
-        <a href="#" class="logo">Gratified</a>
-        <ul class="nav-links">
-            <li><a href="#story">Our Story</a></li>
-            <li><a href="#menu">Menu</a></li>
-            <li><a href="#visit">Visit</a></li>
-            <li><a href="#community">Community</a></li>
-        </ul>
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+    <!-- Desktop Icon Nav -->
+    <nav class="main-nav" id="mainNav">
+        <a href="#landing" class="nav-link active" data-page="landing">
+            <span class="nav-icon icon-dash"></span>
+        </a>
+        <a href="#story" class="nav-link" data-page="story">
+            <span class="nav-icon icon-equal"></span>
+        </a>
+        <a href="#menu" class="nav-link" data-page="menu">
+            <svg class="nav-icon icon-diamond" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18"></rect></svg>
+        </a>
+        <a href="#visit" class="nav-link" data-page="visit">
+            <svg class="nav-icon icon-square" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18"></rect></svg>
+        </a>
+        <a href="#community" class="nav-link" data-page="community">
+            <svg class="nav-icon icon-pentagon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 511.995 511.995" fill="currentColor"><path d="M507.807,200.272L262.474,12.859c-3.819-2.923-9.109-2.923-12.949,0L4.191,200.272c-3.627,2.773-5.077,7.509-3.648,11.84l93.717,281.92c1.451,4.352,5.547,7.296,10.133,7.296h303.253c4.608,0,8.683-2.944,10.091-7.296l93.717-281.92C512.885,207.803,511.413,203.046,507.807,200.272z"/></svg>
+        </a>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-diamond"></div>
-        <div class="hero-diamond-inner"></div>
-        <div class="hero-content">
-            <h1>Gratified</h1>
-            <p class="hero-subtitle">coffee + art</p>
-        </div>
-        <div class="scroll-indicator">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-                <path d="M12 5v14M19 12l-7 7-7-7"/>
-            </svg>
-        </div>
-    </section>
+    <!-- Mobile Bottom Nav -->
+    <nav class="mobile-navbar" id="mobileNav">
+        <a href="#landing" class="mobile-nav-item active" data-page="landing">
+            <span class="mobile-nav-icon icon-dash"></span>
+        </a>
+        <a href="#story" class="mobile-nav-item" data-page="story">
+            <span class="mobile-nav-icon icon-equal"></span>
+        </a>
+        <a href="#menu" class="mobile-nav-item" data-page="menu">
+            <svg class="mobile-nav-icon icon-diamond" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18"></rect></svg>
+        </a>
+        <a href="#visit" class="mobile-nav-item" data-page="visit">
+            <svg class="mobile-nav-icon icon-square" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18"></rect></svg>
+        </a>
+        <a href="#community" class="mobile-nav-item" data-page="community">
+            <svg class="mobile-nav-icon icon-pentagon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 511.995 511.995" fill="currentColor"><path d="M507.807,200.272L262.474,12.859c-3.819-2.923-9.109-2.923-12.949,0L4.191,200.272c-3.627,2.773-5.077,7.509-3.648,11.84l93.717,281.92c1.451,4.352,5.547,7.296,10.133,7.296h303.253c4.608,0,8.683-2.944,10.091-7.296l93.717-281.92C512.885,207.803,511.413,203.046,507.807,200.272z"/></svg>
+        </a>
+    </nav>
 
-   <!-- Story Section -->
-<section class="story-section" id="story">
-    <div class="story-grid">
-        <div class="story-text fade-in">
-            <h3>How Gratified Began</h3>
-            <p>In December 2024 a shaman lady told Azmyth she would start a cafe called Gratified that would serve coffee and do art therapy. This prophecy captured Leah's imagination and got her dreaming about renovating Starbucks for the next quarter century: Making a cafe franchise focused on collaboration instead of competition, healthy drinks instead of sugary rushes, and every location developed to be a unique fit for its community instead of always being the same. In April 2025 we bought the domain, investors pitched in, and a roadmap was put together.</p>
+    <!-- Page Container -->
+    <main class="pages-container" id="main-content">
 
-            <h3>Five Step Plan</h3>
-            <p><b>1.</b> Embed in the hottest tech centers (for the vibes)</p>
-            <p><b>2.</b> Set up pilot locations inside libraries (for the rapport)</p>
-            <p><b>3.</b> Partner with airlines to serve complimentary terminal coffee (for the demand)</p>
-            <p><b>4.</b> Reroute beans through Morocco instead of Switzerland (for the supply)</p>
-            <p><b>5.</b> Acquire Starbucks (because we could make it better)</p>
+        <!-- ========== LANDING ========== -->
+        <div class="landing-page" id="landing">
+            <div class="landing-container">
+                <div class="landing-hero">
+                    <p class="landing-tagline">nourish collab create</p>
+                    <h1 class="logo landing-logo">Gratified</h1>
+                    <div class="logobot landing-logobot">coffee + art</div>
 
-            <h3>Core Drives</h3>
-            <p><b>Nourish</b> — healthy drinks instead of sugary rushes</p>
-            <p><b>Collab</b> — collaboration instead of competition</p>
-            <p><b>Create</b> — every location a unique fit for its community</p>
-        </div>
-        <div class="story-image fade-in">
-            <div class="team-image-container" id="teamImageContainer">
-                <img src="/azmyth-leah-drawing.jpeg" alt="Azmyth and Leah" class="active" data-caption="Azmyth and Leah">
-                <img src="/azmyth.jpeg" alt="Azmyth" data-caption="Azmyth">
-                <img src="/leah.jpg" alt="Leah" data-caption="Leah">
-                <div class="image-caption" id="imageCaption">Azmyth and Leah</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-    <!-- Menu Section -->
-    <section class="menu-section" id="menu">
-        <div class="section-header fade-in">
-            <h2>Menu</h2>
-            <p>Pricing includes tax</p>
-        </div>
-        
-        <div class="menu-tabs fade-in">
-            <button class="menu-tab active" onclick="showMenu('launch')">Launch (Month 1)</button>
-            <button class="menu-tab" onclick="showMenu('expansion1')">Light Fare (Month 2)</button>
-            <button class="menu-tab" onclick="showMenu('expansion2')">Pizza (Month 4+)</button>
-        </div>
-
-        <div id="menu-launch" class="menu-grid fade-in">
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Drip Coffee</span>
-                    <span class="menu-item-price">$3.50</span>
+                    <div class="landing-diamond">
+                        <svg viewBox="0 0 100 100" class="diamond-svg">
+                            <rect class="diamond-fill" x="15" y="15" width="70" height="70" transform="rotate(45 50 50)" fill="var(--theme-accent)"/>
+                            <rect class="diamond-stroke" x="15" y="15" width="70" height="70" transform="rotate(45 50 50)" fill="none" stroke="var(--theme-accent)" stroke-width="2"/>
+                        </svg>
+                    </div>
                 </div>
-                <p class="menu-item-desc">Caf or decaf</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Espresso</span>
-                    <span class="menu-item-price">$3.50</span>
-                </div>
-                <p class="menu-item-desc">Bold and rich</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Americano</span>
-                    <span class="menu-item-price">$3.50</span>
-                </div>
-                <p class="menu-item-desc">Espresso with hot water</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Latte</span>
-                    <span class="menu-item-price">$5.50</span>
-                </div>
-                <p class="menu-item-desc">Espresso with steamed milk</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Cappuccino</span>
-                    <span class="menu-item-price">$5.50</span>
-                </div>
-                <p class="menu-item-desc">Espresso with foam</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Cortado</span>
-                    <span class="menu-item-price">$5.50</span>
-                </div>
-                <p class="menu-item-desc">Equal parts espresso and milk</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Chai Latte</span>
-                    <span class="menu-item-price">$5.50</span>
-                </div>
-                <p class="menu-item-desc">Spiced and warming</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Matcha Latte</span>
-                    <span class="menu-item-price">$5.50</span>
-                </div>
-                <p class="menu-item-desc">Ceremonial grade matcha</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Hot Chocolate</span>
-                    <span class="menu-item-price">$7.50</span>
-                </div>
-                <p class="menu-item-desc">Optional shot</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Mission Chocolate</span>
-                    <span class="menu-item-price">$7.50</span>
-                </div>
-                <p class="menu-item-desc">Local Dandelion Chocolate</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Yerba M'latte</span>
-                    <span class="menu-item-price">$7.50</span>
-                </div>
-                <p class="menu-item-desc">Energizing yerba mate blend</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Mint Lemonade Slushie</span>
-                    <span class="menu-item-price">$4.50</span>
-                </div>
-                <p class="menu-item-desc">$7.50 for two</p>
-                <span class="menu-item-tag">Special</span>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Blueberry Corn Muffin</span>
-                    <span class="menu-item-price">$3.50</span>
-                </div>
-                <p class="menu-item-desc">Fresh baked</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Croissant</span>
-                    <span class="menu-item-price">$5.50</span>
-                </div>
-                <p class="menu-item-desc">Buttery and flaky</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Açaí Cup</span>
-                    <span class="menu-item-price">$7.50</span>
-                </div>
-                <p class="menu-item-desc">Antioxidant-rich</p>
             </div>
         </div>
 
-        <div id="menu-expansion1" class="menu-grid" style="display:none;">
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Split Pea Soup</span>
-                    <span class="menu-item-price">$7.50</span>
+        <!-- ========== STORY ========== -->
+        <div id="story">
+            <div class="container">
+                <div class="header">
+                    <h2 class="logo">Our Story</h2>
+                    <div class="tagline">how it started</div>
                 </div>
-                <p class="menu-item-desc">Hearty and comforting</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Gratified House Salad</span>
-                    <span class="menu-item-price">$9.50</span>
+                <div class="section">
+                    <div class="story-grid">
+                        <div class="story-text fade-in">
+                            <h3>How Gratified Began</h3>
+                            <p>In December 2024 a shaman lady told Azmyth she would start a cafe called Gratified that would serve coffee and do art therapy. This prophecy captured Leah's imagination and got her dreaming about renovating Starbucks for the next quarter century: Making a cafe franchise focused on collaboration instead of competition, healthy drinks instead of sugary rushes, and every location developed to be a unique fit for its community instead of always being the same. In April 2025 we bought the domain, investors pitched in, and a roadmap was put together.</p>
+
+                            <h3>Five Step Plan</h3>
+                            <p><b>1.</b> Embed in the hottest tech centers (for the vibes)</p>
+                            <p><b>2.</b> Set up pilot locations inside libraries (for the rapport)</p>
+                            <p><b>3.</b> Partner with airlines to serve complimentary terminal coffee (for the demand)</p>
+                            <p><b>4.</b> Reroute beans through Morocco instead of Switzerland (for the supply)</p>
+                            <p><b>5.</b> Acquire Starbucks (because we could make it better)</p>
+
+                            <h3>Core Drives</h3>
+                            <p><b>Nourish</b> — healthy drinks instead of sugary rushes</p>
+                            <p><b>Collab</b> — collaboration instead of competition</p>
+                            <p><b>Create</b> — every location a unique fit for its community</p>
+                        </div>
+                        <div class="story-image fade-in">
+                            <div class="team-image-container" id="teamImageContainer">
+                                <img src="azmyth-leah-drawing.jpeg" alt="Azmyth and Leah" class="active" data-caption="azmyth and leah">
+                                <img src="azmyth.jpeg" alt="Azmyth" data-caption="azmyth">
+                                <img src="leah.jpg" alt="Leah" data-caption="leah">
+                                <div class="image-caption" id="imageCaption">azmyth and leah</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <p class="menu-item-desc">Protein: lamb +$6 or lentils</p>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Turkey Sub Sandwich</span>
-                    <span class="menu-item-price">$11.50</span>
-                </div>
-                <p class="menu-item-desc">Fresh and satisfying</p>
             </div>
         </div>
 
-        <div id="menu-expansion2" class="menu-grid" style="display:none;">
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Personal Pan Pizza</span>
-                    <span class="menu-item-price">$9.50</span>
+        <!-- ========== MENU ========== -->
+        <div id="menu">
+            <div class="container">
+                <div class="header">
+                    <h2 class="logo">Nourish</h2>
+                    <div class="tagline">what we're brewing</div>
+                    <p class="pricing-note">All pricing includes tax.</p>
                 </div>
-                <p class="menu-item-desc">Double cheese, halal pepperoni, vegan veggie, or Moroccan-spiced chicken</p>
-                <span class="menu-item-tag">Afternoon Service</span>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <span class="menu-item-name">Two Personal Pizzas</span>
-                    <span class="menu-item-price">$15.50</span>
+                <div class="section">
+                    <div class="menu-tabs fade-in">
+                        <button class="menu-tab active" onclick="showMenu('launch')">launch (month 1)</button>
+                        <button class="menu-tab" onclick="showMenu('expansion1')">light fare (month 2)</button>
+                        <button class="menu-tab" onclick="showMenu('expansion2')">pizza (month 4+)</button>
+                    </div>
+
+                    <div id="menu-launch" class="menu-grid fade-in">
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Drip Coffee</span><span class="menu-item-price">$3.50</span></div><p class="menu-item-desc">Caf or decaf</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Espresso</span><span class="menu-item-price">$3.50</span></div><p class="menu-item-desc">Bold and rich</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Americano</span><span class="menu-item-price">$3.50</span></div><p class="menu-item-desc">Espresso with hot water</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Latte</span><span class="menu-item-price">$5.50</span></div><p class="menu-item-desc">Espresso with steamed milk</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Cappuccino</span><span class="menu-item-price">$5.50</span></div><p class="menu-item-desc">Espresso with foam</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Cortado</span><span class="menu-item-price">$5.50</span></div><p class="menu-item-desc">Equal parts espresso and milk</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Chai Latte</span><span class="menu-item-price">$5.50</span></div><p class="menu-item-desc">Spiced and warming</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Matcha Latte</span><span class="menu-item-price">$5.50</span></div><p class="menu-item-desc">Ceremonial grade matcha</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Hot Chocolate</span><span class="menu-item-price">$7.50</span></div><p class="menu-item-desc">Optional shot</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Mission Chocolate</span><span class="menu-item-price">$7.50</span></div><p class="menu-item-desc">Local Dandelion Chocolate</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Yerba M'latte</span><span class="menu-item-price">$7.50</span></div><p class="menu-item-desc">Energizing yerba mate blend</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Mint Lemonade Slushie</span><span class="menu-item-price">$4.50</span></div><p class="menu-item-desc">$7.50 for two</p><span class="menu-item-tag">special</span></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Blueberry Corn Muffin</span><span class="menu-item-price">$3.50</span></div><p class="menu-item-desc">Fresh baked</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Croissant</span><span class="menu-item-price">$5.50</span></div><p class="menu-item-desc">Buttery and flaky</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Acai Cup</span><span class="menu-item-price">$7.50</span></div><p class="menu-item-desc">Antioxidant-rich</p></div>
+                    </div>
+
+                    <div id="menu-expansion1" class="menu-grid" style="display:none;">
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Split Pea Soup</span><span class="menu-item-price">$7.50</span></div><p class="menu-item-desc">Hearty and comforting</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Gratified House Salad</span><span class="menu-item-price">$9.50</span></div><p class="menu-item-desc">Protein: lamb +$6 or lentils</p></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Turkey Sub Sandwich</span><span class="menu-item-price">$11.50</span></div><p class="menu-item-desc">Fresh and satisfying</p></div>
+                    </div>
+
+                    <div id="menu-expansion2" class="menu-grid" style="display:none;">
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Personal Pan Pizza</span><span class="menu-item-price">$9.50</span></div><p class="menu-item-desc">Double cheese, halal pepperoni, vegan veggie, or Moroccan-spiced chicken</p><span class="menu-item-tag">afternoon service</span></div>
+                        <div class="menu-item"><div class="menu-item-header"><span class="menu-item-name">Two Personal Pizzas</span><span class="menu-item-price">$15.50</span></div><p class="menu-item-desc">Mix and match toppings</p></div>
+                    </div>
+
+                    <p class="menu-note">This is all assuming we pass upcoming health inspections :P</p>
                 </div>
-                <p class="menu-item-desc">Mix and match toppings</p>
             </div>
         </div>
 
-        <p class="menu-note">This is all assuming we pass upcoming health inspections :P</p>
-    </section>
+        <!-- ========== VISIT ========== -->
+        <div id="visit">
+            <div class="container">
+                <div class="section visit-section">
+                    <h3 class="section-title">Visit Us</h3>
+                    <p class="section-intro">Grab a drink and bite downstairs before your study session &lt;3</p>
+                    <div class="visit-grid">
+                        <div class="visit-card fade-in">
+                            <div class="visit-icon"><span>&#x1F4CD;</span></div>
+                            <h3>Location</h3>
+                            <p>Lower Level<br>SF Main Library<br>100 Larkin St<br>San Francisco, CA</p>
+                        </div>
+                        <div class="visit-card fade-in">
+                            <div class="visit-icon"><span>&#x1F550;</span></div>
+                            <h3>Hours</h3>
+                            <p>Open during all library hours<br>Closed when the library is closed<br>Service during conferences whenever possible</p>
+                        </div>
+                        <div class="visit-card fade-in">
+                            <div class="visit-icon"><span>&#x2615;</span></div>
+                            <h3>What to Expect</h3>
+                            <p>Laptop chargers, pleasant seats to curl up on for some chapters, and reliable service</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- Visit Section -->
-    <section class="visit-section" id="visit">
-        <div class="section-header fade-in">
-            <h2>Visit Us</h2>
-            <p>Grab a drink and bite downstairs before your study session &lt;3</p>
+        <!-- ========== COMMUNITY ========== -->
+        <div id="community">
+            <div class="container">
+                <div class="header">
+                    <h2 class="logo">Connect</h2>
+                    <div class="tagline">friends, partners, and you</div>
+                </div>
+                <div class="section">
+                    <div class="community-content fade-in">
+                        <p>If you want to reach out directly, message leah@gratified.com</p>
+                        <div class="community-links">
+                            <a href="#" class="community-link">
+                                <span>&#x1F389;</span> Partiful — Event invites
+                            </a>
+                            <a href="#" class="community-link">
+                                <span>&#x1F4AC;</span> Discord — Coordinate hangouts
+                            </a>
+                            <a href="#" class="community-link">
+                                <span>&#x270D;&#xFE0F;</span> Substack — Cafe philosophy
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="visit-grid">
-            <div class="visit-card fade-in">
-                <div class="visit-icon">📍</div>
-                <h3>Location</h3>
-                <p>Lower Level<br>SF Main Library<br>100 Larkin St<br>San Francisco, CA</p>
-            </div>
-            <div class="visit-card fade-in">
-                <div class="visit-icon">🕐</div>
-                <h3>Hours</h3>
-                <p>Open during all library hours<br>Closed when the library is closed<br>Service during conferences whenever possible</p>
-            </div>
-            <div class="visit-card fade-in">
-                <div class="visit-icon">☕</div>
-                <h3>What to Expect</h3>
-                <p>Laptop chargers, pleasant seats to curl up on for some chapters, and reliable service</p>
-            </div>
-        </div>
-    </section>
 
-    <!-- Community Section -->
-    <section class="community-section" id="community">
-        <div class="section-header fade-in">
-            <h2>Follow and connect</h2>
-            <p>We love friends, coffee+art partners, and you!</p>
-        </div>
-        <div class="community-content fade-in">
-            <p>If you want to reach out directly, message leah@gratified.com</p>
-            <div class="community-links">
-                <a href="#" class="community-link">
-                    <span>🎉</span> Partiful — Event invites
-                </a>
-                <a href="#" class="community-link">
-                    <span>💬</span> Discord — Coordinate hangouts
-                </a>
-                <a href="#" class="community-link">
-                    <span>✍️</span> Substack — Cafe philosophy
-                </a>
-            </div>
-        </div>
-    </section>
+    </main>
 
     <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div class="footer-logo">Gratified</div>
             <p class="footer-tagline">"A place that gratifies visitors and draws a fun crowd of online people together to socialize"</p>
-            <div class="footer-links">
-                <a href="#story">Our Story</a>
-                <a href="#menu">Menu</a>
-                <a href="#visit">Visit</a>
-                <a href="#community">Community</a>
-            </div>
             <div class="footer-bottom">
-                <p>© 2026 Gratified Cafe. All rights reserved.</p>
-                <p>SF Main Library, Lower Level · gratified.com</p>
+                <p>&copy; 2026 Gratified Cafe. All rights reserved.</p>
+                <p>SF Main Library, Lower Level &middot; gratified.com</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Navbar scroll effect
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
-
         // Menu tab switching
         function showMenu(category) {
             document.getElementById('menu-launch').style.display = 'none';
             document.getElementById('menu-expansion1').style.display = 'none';
             document.getElementById('menu-expansion2').style.display = 'none';
-            
             document.getElementById('menu-' + category).style.display = 'grid';
-            
-            document.querySelectorAll('.menu-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
+            document.querySelectorAll('.menu-tab').forEach(tab => tab.classList.remove('active'));
             event.target.classList.add('active');
         }
 
-        // Team image hover thrum effect
-        const container = document.getElementById('teamImageContainer');
-        const images = container.querySelectorAll('img');
-        const caption = document.getElementById('imageCaption');
-        let thrumInterval = null;
-        let currentIndex = 0;
+        // Nav active state on scroll
+        const sections = ['landing', 'story', 'menu', 'visit', 'community'];
+        const navLinks = document.querySelectorAll('.nav-link');
+        const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
 
-        function showImage(index) {
-            images.forEach((img, i) => {
-                img.classList.toggle('active', i === index);
+        function updateActiveNav() {
+            let current = 'landing';
+            for (const id of sections) {
+                const el = document.getElementById(id);
+                if (el && el.getBoundingClientRect().top <= 150) {
+                    current = id;
+                }
+            }
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.dataset.page === current);
             });
-            caption.textContent = images[index].dataset.caption;
+            mobileNavItems.forEach(item => {
+                item.classList.toggle('active', item.dataset.page === current);
+            });
         }
 
-        container.addEventListener('mouseenter', () => {
-            let step = 0;
-            const sequence = [1, 2, 0]; // azmyth-irl, leah-irl, back to drawing
-            
-            thrumInterval = setInterval(() => {
-                if (step < sequence.length) {
-                    showImage(sequence[step]);
-                    step++;
-                } else {
-                    clearInterval(thrumInterval);
-                    thrumInterval = null;
-                }
-            }, 180); // quick thrum speed
-        });
+        window.addEventListener('scroll', updateActiveNav);
 
-        container.addEventListener('mouseleave', () => {
-            if (thrumInterval) {
-                clearInterval(thrumInterval);
-                thrumInterval = null;
+        // Team image hover thrum
+        const container = document.getElementById('teamImageContainer');
+        if (container) {
+            const images = container.querySelectorAll('img');
+            const caption = document.getElementById('imageCaption');
+            let thrumInterval = null;
+
+            function showImage(index) {
+                images.forEach((img, i) => img.classList.toggle('active', i === index));
+                caption.textContent = images[index].dataset.caption;
             }
-            showImage(0); // back to drawing
-        });
 
-        // Intersection Observer for fade-in animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+            container.addEventListener('mouseenter', () => {
+                let step = 0;
+                const sequence = [1, 2, 0];
+                thrumInterval = setInterval(() => {
+                    if (step < sequence.length) {
+                        showImage(sequence[step]);
+                        step++;
+                    } else {
+                        clearInterval(thrumInterval);
+                        thrumInterval = null;
+                    }
+                }, 180);
+            });
 
+            container.addEventListener('mouseleave', () => {
+                if (thrumInterval) { clearInterval(thrumInterval); thrumInterval = null; }
+                showImage(0);
+            });
+        }
+
+        // Intersection Observer for fade-in
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
+                if (entry.isIntersecting) entry.target.classList.add('visible');
             });
-        }, observerOptions);
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Mobile menu toggle
-        function toggleMobileMenu() {
-            const navLinks = document.querySelector('.nav-links');
-            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-            navLinks.style.position = 'absolute';
-            navLinks.style.top = '100%';
-            navLinks.style.left = '0';
-            navLinks.style.right = '0';
-            navLinks.style.flexDirection = 'column';
-            navLinks.style.background = 'rgba(237, 232, 224, 0.98)';
-            navLinks.style.padding = '1rem';
-            navLinks.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
-        }
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
