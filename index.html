@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gratified — Main Library Cafe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-plum: #4a1c2a;
+            --terracotta: #c45c26;
+            --warm-gold: #d4a843;
+            --cream: #f5f0e8;
+            --dark: #1a1a1a;
+            --soft-plum: #6b2d3d;
+            --diamond-orange: #c76b1e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--cream);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.2rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: all 0.4s ease;
+            background: transparent;
+        }
+
+        nav.scrolled {
+            background: rgba(245, 240, 232, 0.97);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 1px 30px rgba(0,0,0,0.06);
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--deep-plum);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--terracotta);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1.5px;
+            background: var(--terracotta);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--deep-plum);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: var(--deep-plum);
+            overflow: hidden;
+        }
+
+        .hero-diamond {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: var(--diamond-orange);
+            transform: rotate(45deg);
+            opacity: 0.15;
+            top: 50%;
+            left: 50%;
+            margin-top: -250px;
+            margin-left: -250px;
+            animation: diamondPulse 6s ease-in-out infinite;
+        }
+
+        .hero-diamond-inner {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: var(--warm-gold);
+            transform: rotate(45deg);
+            opacity: 0.1;
+            top: 50%;
+            left: 50%;
+            margin-top: -175px;
+            margin-left: -175px;
+            animation: diamondPulse 6s ease-in-out infinite 1s;
+        }
+
+        @keyframes diamondPulse {
+            0%, 100% { transform: rotate(45deg) scale(1); opacity: 0.15; }
+            50% { transform: rotate(45deg) scale(1.05); opacity: 0.2; }
+        }
+
+        .hero-content {
+            text-align: center;
+            color: var(--cream);
+            z-index: 2;
+            padding: 2rem;
+            max-width: 700px;
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(5rem, 15vw, 12rem);
+            font-weight: 700;
+            line-height: 0.9;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 1s ease 0.2s both;
+            letter-spacing: -4px;
+            text-transform: uppercase;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
+            font-weight: 300;
+            opacity: 0.7;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            animation: fadeInUp 1s ease 0.5s both;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--cream);
+            opacity: 0.5;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Section Styles */
+        section {
+            padding: 7rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            color: var(--deep-plum);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .section-header p {
+            font-size: 1.05rem;
+            color: var(--dark);
+            opacity: 0.6;
+            max-width: 550px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        /* Story Section */
+        .story-section {
+            background: var(--cream);
+        }
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: start;
+        }
+
+        .story-text h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            color: var(--deep-plum);
+            margin-bottom: 1.2rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin-top: 2.5rem;
+        }
+
+        .story-text h3:first-child {
+            margin-top: 0;
+        }
+
+        .story-text p {
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--dark);
+            opacity: 0.85;
+        }
+
+        .story-text .highlight {
+            color: var(--terracotta);
+            font-weight: 600;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .value-item {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            border: 1.5px solid var(--deep-plum);
+        }
+
+        .value-item .value-word {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--deep-plum);
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .value-item .value-desc {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            line-height: 1.5;
+        }
+
+        /* Team Image with Hover Thrum */
+        .team-image-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .team-image-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.08s ease;
+        }
+
+        .team-image-container img.active {
+            opacity: 1;
+        }
+
+        .team-image-container .image-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: linear-gradient(to top, rgba(26,26,26,0.8), transparent);
+            color: var(--cream);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 500;
+            z-index: 10;
+        }
+
+        /* Menu Section */
+        .menu-section {
+            background: linear-gradient(to bottom, var(--cream), #fff);
+        }
+
+        .menu-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .menu-tab {
+            padding: 0.7rem 1.8rem;
+            border: 1.5px solid var(--deep-plum);
+            background: transparent;
+            color: var(--deep-plum);
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-tab.active,
+        .menu-tab:hover {
+            background: var(--deep-plum);
+            color: var(--cream);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .menu-item {
+            background: white;
+            padding: 1.4rem 1.6rem;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(74, 28, 42, 0.06);
+        }
+
+        .menu-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(74, 28, 42, 0.08);
+            border-color: rgba(74, 28, 42, 0.12);
+        }
+
+        .menu-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.4rem;
+        }
+
+        .menu-item-name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--deep-plum);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .menu-item-price {
+            font-weight: 600;
+            color: var(--terracotta);
+            font-size: 1rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .menu-item-desc {
+            font-size: 0.88rem;
+            color: var(--dark);
+            opacity: 0.6;
+            line-height: 1.5;
+        }
+
+        .menu-item-tag {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            background: rgba(196, 92, 38, 0.08);
+            color: var(--terracotta);
+            font-size: 0.72rem;
+            font-weight: 600;
+            margin-top: 0.6rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .menu-note {
+            text-align: center;
+            margin-top: 2.5rem;
+            font-size: 0.85rem;
+            opacity: 0.5;
+        }
+
+        /* Visit Section */
+        .visit-section {
+            background: var(--deep-plum);
+            color: var(--cream);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .visit-section .section-header h2 {
+            color: var(--cream);
+        }
+
+        .visit-section .section-header p {
+            color: var(--cream);
+            opacity: 0.7;
+        }
+
+        .visit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .visit-card {
+            text-align: center;
+            padding: 2.5rem 2rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(245, 240, 232, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .visit-card:hover {
+            background: rgba(255,255,255,0.07);
+            transform: translateY(-3px);
+            border-color: rgba(245, 240, 232, 0.15);
+        }
+
+        .visit-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 1.5rem;
+            background: rgba(212, 168, 67, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .visit-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .visit-card p {
+            font-size: 0.92rem;
+            opacity: 0.75;
+            line-height: 1.7;
+        }
+
+        /* Community Section */
+        .community-section {
+            background: var(--cream);
+        }
+
+        .community-content {
+            text-align: center;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .community-content p {
+            font-size: 1.08rem;
+            line-height: 1.9;
+            margin-bottom: 1.8rem;
+            color: var(--dark);
+            opacity: 0.85;
+        }
+
+        .community-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .community-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.9rem 1.8rem;
+            background: white;
+            text-decoration: none;
+            color: var(--deep-plum);
+            font-weight: 500;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(74, 28, 42, 0.08);
+            font-size: 0.9rem;
+        }
+
+        .community-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+            color: var(--terracotta);
+            border-color: rgba(196, 92, 38, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: var(--cream);
+            padding: 5rem 2rem 2.5rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+            color: var(--warm-gold);
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-tagline {
+            font-style: italic;
+            opacity: 0.6;
+            margin-bottom: 2.5rem;
+            font-size: 1.05rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--cream);
+            text-decoration: none;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--warm-gold);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(245, 240, 232, 0.08);
+            padding-top: 2rem;
+            font-size: 0.82rem;
+            opacity: 0.4;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .story-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .visit-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 5rem 1.5rem;
+            }
+
+            .hero-diamond {
+                width: 300px;
+                height: 300px;
+                margin-top: -150px;
+                margin-left: -150px;
+            }
+        }
+
+        /* Intersection Observer Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="logo">Gratified</a>
+        <ul class="nav-links">
+            <li><a href="#story">Our Story</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#visit">Visit</a></li>
+            <li><a href="#community">Community</a></li>
+        </ul>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-diamond"></div>
+        <div class="hero-diamond-inner"></div>
+        <div class="hero-content">
+            <h1>Gratified</h1>
+            <p class="hero-subtitle">coffee + art</p>
+        </div>
+        <div class="scroll-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+        </div>
+    </section>
+
+   <!-- Story Section -->
+<section class="story-section" id="story">
+    <div class="story-grid">
+        <div class="story-text fade-in">
+            <h3>How Gratified Began</h3>
+            <p>In December 2024 a shaman lady told Azmyth she would start a cafe called Gratified that would serve coffee and do art therapy. This prophecy captured Leah's imagination and got her dreaming about renovating Starbucks for the next quarter century: Making a cafe franchise focused on collaboration instead of competition, healthy drinks instead of sugary rushes, and every location developed to be a unique fit for its community instead of always being the same. In April 2025 we bought the domain, investors pitched in, and a roadmap was put together.</p>
+
+            <h3>Five Step Plan</h3>
+            <p><b>1.</b> Embed in the hottest tech centers (for the vibes)</p>
+            <p><b>2.</b> Set up pilot locations inside libraries (for the rapport)</p>
+            <p><b>3.</b> Partner with airlines to serve complimentary terminal coffee (for the demand)</p>
+            <p><b>4.</b> Reroute beans through Morocco instead of Switzerland (for the supply)</p>
+            <p><b>5.</b> Acquire Starbucks (because we could make it better)</p>
+
+            <h3>Core Drives</h3>
+            <p><b>Nourish</b> — healthy drinks instead of sugary rushes</p>
+            <p><b>Collab</b> — collaboration instead of competition</p>
+            <p><b>Create</b> — every location a unique fit for its community</p>
+        </div>
+        <div class="story-image fade-in">
+            <div class="team-image-container" id="teamImageContainer">
+                <img src="/images/azmyth-leah-drawing.jpg" alt="Azmyth and Leah" class="active" data-caption="Azmyth and Leah">
+                <img src="/images/azmyth-irl.jpg" alt="Azmyth" data-caption="Azmyth">
+                <img src="/images/leah-irl.jpg" alt="Leah" data-caption="Leah">
+                <div class="image-caption" id="imageCaption">Azmyth and Leah</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Menu Section -->
+    <section class="menu-section" id="menu">
+        <div class="section-header fade-in">
+            <h2>Menu</h2>
+            <p>Pricing includes tax</p>
+        </div>
+        
+        <div class="menu-tabs fade-in">
+            <button class="menu-tab active" onclick="showMenu('launch')">Launch (Month 1)</button>
+            <button class="menu-tab" onclick="showMenu('expansion1')">Light Fare (Month 2)</button>
+            <button class="menu-tab" onclick="showMenu('expansion2')">Pizza (Month 4+)</button>
+        </div>
+
+        <div id="menu-launch" class="menu-grid fade-in">
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Drip Coffee</span>
+                    <span class="menu-item-price">$3.50</span>
+                </div>
+                <p class="menu-item-desc">Caf or decaf</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Espresso</span>
+                    <span class="menu-item-price">$3.50</span>
+                </div>
+                <p class="menu-item-desc">Bold and rich</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Americano</span>
+                    <span class="menu-item-price">$3.50</span>
+                </div>
+                <p class="menu-item-desc">Espresso with hot water</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Latte</span>
+                    <span class="menu-item-price">$5.50</span>
+                </div>
+                <p class="menu-item-desc">Espresso with steamed milk</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Cappuccino</span>
+                    <span class="menu-item-price">$5.50</span>
+                </div>
+                <p class="menu-item-desc">Espresso with foam</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Cortado</span>
+                    <span class="menu-item-price">$5.50</span>
+                </div>
+                <p class="menu-item-desc">Equal parts espresso and milk</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Chai Latte</span>
+                    <span class="menu-item-price">$5.50</span>
+                </div>
+                <p class="menu-item-desc">Spiced and warming</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Matcha Latte</span>
+                    <span class="menu-item-price">$5.50</span>
+                </div>
+                <p class="menu-item-desc">Ceremonial grade matcha</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Hot Chocolate</span>
+                    <span class="menu-item-price">$7.50</span>
+                </div>
+                <p class="menu-item-desc">Optional shot</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Mission Chocolate</span>
+                    <span class="menu-item-price">$7.50</span>
+                </div>
+                <p class="menu-item-desc">Local Dandelion Chocolate</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Yerba M'latte</span>
+                    <span class="menu-item-price">$7.50</span>
+                </div>
+                <p class="menu-item-desc">Energizing yerba mate blend</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Mint Lemonade Slushie</span>
+                    <span class="menu-item-price">$4.50</span>
+                </div>
+                <p class="menu-item-desc">$7.50 for two</p>
+                <span class="menu-item-tag">Special</span>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Blueberry Corn Muffin</span>
+                    <span class="menu-item-price">$3.50</span>
+                </div>
+                <p class="menu-item-desc">Fresh baked</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Croissant</span>
+                    <span class="menu-item-price">$5.50</span>
+                </div>
+                <p class="menu-item-desc">Buttery and flaky</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Açaí Cup</span>
+                    <span class="menu-item-price">$7.50</span>
+                </div>
+                <p class="menu-item-desc">Antioxidant-rich</p>
+            </div>
+        </div>
+
+        <div id="menu-expansion1" class="menu-grid" style="display:none;">
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Split Pea Soup</span>
+                    <span class="menu-item-price">$7.50</span>
+                </div>
+                <p class="menu-item-desc">Hearty and comforting</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Gratified House Salad</span>
+                    <span class="menu-item-price">$9.50</span>
+                </div>
+                <p class="menu-item-desc">Protein: lamb +$6 or lentils</p>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Turkey Sub Sandwich</span>
+                    <span class="menu-item-price">$11.50</span>
+                </div>
+                <p class="menu-item-desc">Fresh and satisfying</p>
+            </div>
+        </div>
+
+        <div id="menu-expansion2" class="menu-grid" style="display:none;">
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Personal Pan Pizza</span>
+                    <span class="menu-item-price">$9.50</span>
+                </div>
+                <p class="menu-item-desc">Double cheese, halal pepperoni, vegan veggie, or Moroccan-spiced chicken</p>
+                <span class="menu-item-tag">Afternoon Service</span>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-header">
+                    <span class="menu-item-name">Two Personal Pizzas</span>
+                    <span class="menu-item-price">$15.50</span>
+                </div>
+                <p class="menu-item-desc">Mix and match toppings</p>
+            </div>
+        </div>
+
+        <p class="menu-note">This is all assuming we pass upcoming health inspections :P</p>
+    </section>
+
+    <!-- Visit Section -->
+    <section class="visit-section" id="visit">
+        <div class="section-header fade-in">
+            <h2>Visit Us</h2>
+            <p>Grab a drink and bite downstairs before your study session &lt;3</p>
+        </div>
+        <div class="visit-grid">
+            <div class="visit-card fade-in">
+                <div class="visit-icon">📍</div>
+                <h3>Location</h3>
+                <p>Lower Level<br>SF Main Library<br>100 Larkin St<br>San Francisco, CA</p>
+            </div>
+            <div class="visit-card fade-in">
+                <div class="visit-icon">🕐</div>
+                <h3>Hours</h3>
+                <p>Open during all library hours<br>Closed when the library is closed<br>Service during conferences whenever possible</p>
+            </div>
+            <div class="visit-card fade-in">
+                <div class="visit-icon">☕</div>
+                <h3>What to Expect</h3>
+                <p>Laptop chargers, pleasant seats to curl up on for some chapters, and reliable service</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section class="community-section" id="community">
+        <div class="section-header fade-in">
+            <h2>Follow and connect</h2>
+            <p>We love friends, coffee+art partners, and you!</p>
+        </div>
+        <div class="community-content fade-in">
+            <p>If you want to reach out directly, message leah@gratified.com</p>
+            <div class="community-links">
+                <a href="#" class="community-link">
+                    <span>🎉</span> Partiful — Event invites
+                </a>
+                <a href="#" class="community-link">
+                    <span>💬</span> Discord — Coordinate hangouts
+                </a>
+                <a href="#" class="community-link">
+                    <span>✍️</span> Substack — Deep cafe philosophy
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Gratified</div>
+            <p class="footer-tagline">"A place that gratifies visitors and draws a fun crowd of online people together to socialize"</p>
+            <div class="footer-links">
+                <a href="#story">Our Story</a>
+                <a href="#menu">Menu</a>
+                <a href="#visit">Visit</a>
+                <a href="#community">Community</a>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Gratified Cafe. All rights reserved.</p>
+                <p>SF Main Library, Lower Level · gratified.com</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Menu tab switching
+        function showMenu(category) {
+            document.getElementById('menu-launch').style.display = 'none';
+            document.getElementById('menu-expansion1').style.display = 'none';
+            document.getElementById('menu-expansion2').style.display = 'none';
+            
+            document.getElementById('menu-' + category).style.display = 'grid';
+            
+            document.querySelectorAll('.menu-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // Team image hover thrum effect
+        const container = document.getElementById('teamImageContainer');
+        const images = container.querySelectorAll('img');
+        const caption = document.getElementById('imageCaption');
+        let thrumInterval = null;
+        let currentIndex = 0;
+
+        function showImage(index) {
+            images.forEach((img, i) => {
+                img.classList.toggle('active', i === index);
+            });
+            caption.textContent = images[index].dataset.caption;
+        }
+
+        container.addEventListener('mouseenter', () => {
+            let step = 0;
+            const sequence = [1, 2, 0]; // azmyth-irl, leah-irl, back to drawing
+            
+            thrumInterval = setInterval(() => {
+                if (step < sequence.length) {
+                    showImage(sequence[step]);
+                    step++;
+                } else {
+                    clearInterval(thrumInterval);
+                    thrumInterval = null;
+                }
+            }, 180); // quick thrum speed
+        });
+
+        container.addEventListener('mouseleave', () => {
+            if (thrumInterval) {
+                clearInterval(thrumInterval);
+                thrumInterval = null;
+            }
+            showImage(0); // back to drawing
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+            navLinks.style.position = 'absolute';
+            navLinks.style.top = '100%';
+            navLinks.style.left = '0';
+            navLinks.style.right = '0';
+            navLinks.style.flexDirection = 'column';
+            navLinks.style.background = 'rgba(245, 240, 232, 0.98)';
+            navLinks.style.padding = '1rem';
+            navLinks.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+        }
+    </script>
+</body>
+</html>
