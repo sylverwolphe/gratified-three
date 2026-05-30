@@ -859,6 +859,7 @@
             transform: translateY(0);
         }
     </style>
+<base target="_blank">
 </head>
 <body>
     <div class="grain-overlay"></div>
@@ -869,16 +870,16 @@
         <a href="#landing" class="nav-link active" data-page="landing">
             <span class="nav-icon icon-dash"></span>
         </a>
-        <a href="#story" class="nav-link" data-page="story">
+        <a href="#menu" class="nav-link" data-page="menu">
             <span class="nav-icon icon-equal"></span>
         </a>
-        <a href="#menu" class="nav-link" data-page="menu">
+        <a href="#community" class="nav-link" data-page="community">
             <svg class="nav-icon icon-diamond" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18"></rect></svg>
         </a>
         <a href="#visit" class="nav-link" data-page="visit">
             <svg class="nav-icon icon-square" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18"></rect></svg>
         </a>
-        <a href="#community" class="nav-link" data-page="community">
+        <a href="#story" class="nav-link" data-page="story">
             <svg class="nav-icon icon-pentagon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 511.995 511.995" fill="currentColor"><path d="M507.807,200.272L262.474,12.859c-3.819-2.923-9.109-2.923-12.949,0L4.191,200.272c-3.627,2.773-5.077,7.509-3.648,11.84l93.717,281.92c1.451,4.352,5.547,7.296,10.133,7.296h303.253c4.608,0,8.683-2.944,10.091-7.296l93.717-281.92C512.885,207.803,511.413,203.046,507.807,200.272z"/></svg>
         </a>
     </nav>
@@ -888,16 +889,16 @@
         <a href="#landing" class="mobile-nav-item active" data-page="landing">
             <span class="mobile-nav-icon icon-dash"></span>
         </a>
-        <a href="#story" class="mobile-nav-item" data-page="story">
+        <a href="#menu" class="mobile-nav-item" data-page="menu">
             <span class="mobile-nav-icon icon-equal"></span>
         </a>
-        <a href="#menu" class="mobile-nav-item" data-page="menu">
+        <a href="#community" class="mobile-nav-item" data-page="community">
             <svg class="mobile-nav-icon icon-diamond" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18"></rect></svg>
         </a>
         <a href="#visit" class="mobile-nav-item" data-page="visit">
             <svg class="mobile-nav-icon icon-square" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18"></rect></svg>
         </a>
-        <a href="#community" class="mobile-nav-item" data-page="community">
+        <a href="#story" class="mobile-nav-item" data-page="story">
             <svg class="mobile-nav-icon icon-pentagon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 511.995 511.995" fill="currentColor"><path d="M507.807,200.272L262.474,12.859c-3.819-2.923-9.109-2.923-12.949,0L4.191,200.272c-3.627,2.773-5.077,7.509-3.648,11.84l93.717,281.92c1.451,4.352,5.547,7.296,10.133,7.296h303.253c4.608,0,8.683-2.944,10.091-7.296l93.717-281.92C512.885,207.803,511.413,203.046,507.807,200.272z"/></svg>
         </a>
     </nav>
@@ -928,8 +929,7 @@
             <div class="container">
                 <div class="header">
                     <h2 class="logo">Nourish</h2>
-                    <div class="tagline">what we're brewing</div>
-                    <p class="pricing-note">All pricing includes tax.</p>
+                    <div class="tagline">upcoming menu options</div>
                 </div>
                 <div class="section">
                     <div class="menu-tabs fade-in">
@@ -1075,7 +1075,7 @@
         }
 
         // Nav active state on scroll
-        const sections = ['landing', 'story', 'menu', 'visit', 'community'];
+        const sections = ['landing', 'menu', 'community', 'visit', 'story'];
         const navLinks = document.querySelectorAll('.nav-link');
         const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
 
