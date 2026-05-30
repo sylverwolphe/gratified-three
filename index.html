@@ -458,10 +458,17 @@
 
         /* ===== STORY SECTION ===== */
         .story-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5rem;
-            align-items: start;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .story-text {
+            text-align: center;
+            width: 100%;
         }
 
         .story-text h3 {
@@ -528,10 +535,12 @@
         .team-image-container {
             position: relative;
             width: 100%;
+            max-width: 400px;
             aspect-ratio: 1 / 1;
             overflow: hidden;
             cursor: pointer;
             border: 3px solid var(--theme-accent);
+            margin: 0 auto;
         }
 
         .team-image-container::before {
@@ -841,7 +850,7 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .story-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+            .story-grid { flex-direction: column; gap: 2.5rem; }
             .values-grid { grid-template-columns: 1fr; }
             .visit-grid { grid-template-columns: 1fr; }
             .menu-grid { grid-template-columns: 1fr; }
@@ -859,6 +868,7 @@
             transform: translateY(0);
         }
     </style>
+<base target="_blank">
 <base target="_blank">
 </head>
 <body>
