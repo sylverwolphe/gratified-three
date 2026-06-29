@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cafe Task Board</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #f6f6f4;
+  }
+
+  header {
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    background: white;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .col {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    min-height: 70vh;
+  }
+
+  .col h2 {
+    margin: 0;
+    padding: 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .tasks {
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .task {
+    padding: 8px;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: grab;
+    font-size: 13px;
+  }
+
+  .task:active {
+    cursor: grabbing;
+  }
+
+  .add {
+    display: flex;
+    border-top: 1px solid #eee;
+  }
+
+  .add input {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    outline: none;
+  }
+
+  .add button {
+    border: none;
+    padding: 8px 10px;
+    background: #111;
+    color: white;
+    cursor: pointer;
+  }
+
+  .delete {
+    float: right;
+    cursor: pointer;
+    color: #999;
+  }
+
+  .delete:hover {
+    color: red;
+  }
+</style>
+</head>
+
+<body>
+
+<header>Cafe Ops Board</header>
+
+<div class="board">
+
+  <div class="col" data-col="ideas">
+    <h2>Ideas</h2>
+    <div class="tasks"></div>
+    <div class="add">
+      <input placeholder="New idea..." />
+      <button onclick="addTask(this,'ideas')">+</button>
+    </div>
+  </div>
+
+  <div class="col" data-col="backlog">
+    <h2>Backlog</h2>
+    <div class="tasks"></div>
+    <div class="add">
+      <input placeholder="New task..." />
+      <button onclick="addTask(this,'backlog')">+</button>
+    </div>
+  </div>
+
+  <div class="col" data-col="thisweek">
+    <h2>This Week</h2>
+    <div class="tasks"></div>
+    <div class="add">
+      <input placeholder="New task..." />
+      <button onclick="addTask(this,'thisweek')">+</button>
+    </div>
+  </div>
+
+  <div class="col" data-col="waiting">
+    <h2>Waiting</h2>
+    <div class="tasks"></div>
+    <div class="add">
+      <input placeholder="Blocked..." />
+      <button onclick="addTask(this,'waiting')">+</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("cafeBoard") || "{}");
+
+const cols = ["ideas","backlog","thisweek","waiting"];
+
+function save() {
+  localStorage.setItem("cafeBoard", JSON.stringify(data));
+}
+
+function render() {
+  cols.forEach(col => {
+    const el = document.querySelector(`[data-col="${col}"] .tasks`);
+    el.innerHTML = "";
+
+    (data[col] || []).forEach((task, i) => {
+      const div = document.createElement("div");
+      div.className = "task";
+      div.draggable = true;
+      div.dataset.col = col;
+      div.dataset.index = i;
+
+      div.innerHTML = `
+        ${task}
+        <span class="delete" onclick="deleteTask('${col}',${i})">×</span>
+      `;
+
+      div.ondragstart = e => {
+        e.dataTransfer.setData("text/plain", JSON.stringify({
+          col,
+          index: i
+        }));
+      };
+
+      el.appendChild(div);
+    });
+  });
+}
+
+function addTask(btn, col) {
+  const input = btn.parentElement.querySelector("input");
+  const val = input.value.trim();
+  if (!val) return;
+
+  if (!data[col]) data[col] = [];
+  data[col].push(val);
+
+  input.value = "";
+  save();
+  render();
+}
+
+function deleteTask(col, i) {
+  data[col].splice(i, 1);
+  save();
+  render();
+}
+
+// drag/drop
+document.querySelectorAll(".tasks").forEach(zone => {
+  zone.ondragover = e => e.preventDefault();
+
+  zone.ondrop = e => {
+    e.preventDefault();
+    const from = JSON.parse(e.dataTransfer.getData("text/plain"));
+    const toCol = zone.parentElement.dataset.col;
+
+    const item = data[from.col][from.index];
+    data[from.col].splice(from.index, 1);
+
+    if (!data[toCol]) data[toCol] = [];
+    data[toCol].push(item);
+
+    save();
+    render();
+  };
+});
+
+render();
+</script>
+
+</body>
+</html>
