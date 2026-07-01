@@ -443,36 +443,26 @@ select.ctrl { cursor:pointer; }
   </div>
 </div>
 
-<!-- FIREBASE SETUP -->
-<div class="setup" id="setup" style="display:none">
-  <div class="setup-box">
-    <h2>Connect Firebase</h2>
-    <p>Paste your Firebase config below (Firebase console → Project Settings → SDK setup and config). Tasks sync live via Firestore. Config is saved locally — you only enter this once.</p>
-    <textarea class="setup-cfg" id="fb-cfg" placeholder='{
-  "apiKey": "...",
-  "authDomain": "your-project.firebaseapp.com",
-  "projectId": "your-project",
-  "storageBucket": "your-project.appspot.com",
-  "messagingSenderId": "...",
-  "appId": "..."
-}'></textarea>
-    <div class="setup-err" id="setup-err"></div>
-    <div class="setup-actions">
-      <button class="btn btn-primary" onclick="initFirebase()">Connect</button>
-      <button class="btn btn-ghost"   onclick="skipToLocal()">Skip — use local</button>
-    </div>
-    <p class="setup-foot">
-      No project yet? <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a>
-      — create a Firestore database in test mode (allow read, write: true).
-    </p>
-  </div>
-</div>
-
 <script type="module">
-import { initializeApp, getApps } from
+import { initializeApp } from
   'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, doc, setDoc, onSnapshot } from
-  'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getDatabase, ref, set, onValue } from
+  'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+/* ──────── FIREBASE CONFIG ──────── */
+const firebaseConfig = {
+  apiKey: "AIzaSyCX9LqCG0G_zLFIii3hYQYpA5Cz3vXO1m8",
+  authDomain: "gratifiedwegrow.firebaseapp.com",
+  databaseURL: "https://gratifiedwegrow-default-rtdb.firebaseio.com",
+  projectId: "gratifiedwegrow",
+  storageBucket: "gratifiedwegrow.firebasestorage.app",
+  messagingSenderId: "620449599596",
+  appId: "1:620449599596:web:4fcb7277f32cf636780849"
+};
+
+const app  = initializeApp(firebaseConfig);
+const rtdb = getDatabase(app);
+const stateRef = ref(rtdb, 'ops-board/state');
 
 /* ──────── CONSTANTS ──────── */
 const COLS = [
@@ -486,8 +476,6 @@ const COLS = [
 
 const LABELS    = ['supply','ops','event','art','finance','menu','community','health','staff','urgent'];
 const PRI_COLOR = { high:'#CC5500', medium:'#D2691E', low:'#6B5740' };
-const CFG_KEY   = 'gratified-fb-cfg';
-const LOCAL_KEY = 'gratified-ops-local';
 
 /* ──────── STATE ──────── */
 let db = {
@@ -495,80 +483,32 @@ let db = {
   columns: Object.fromEntries(COLS.map(c => [c.id, []])),
 };
 
-let firestore  = null;
-let localMode  = false;
 let openId     = null;
 let drag       = null;   // { taskId, colId }
 let subTarget  = null;   // taskId currently highlighted as subtask-drop target
 let flt        = { search:'', pri:'', label:'' };
+let applyingRemote = false; // guard to avoid re-writing what we just received
 
-/* ──────── PERSISTENCE ──────── */
-async function loadCfg() {
-  try { const r = await window.storage.get(CFG_KEY); if (r?.value) return JSON.parse(r.value); }
-  catch {}
-  return null;
-}
-async function saveCfg(cfg) {
-  try { await window.storage.set(CFG_KEY, JSON.stringify(cfg)); } catch {}
-}
-
-window.initFirebase = async function () {
-  const raw = document.getElementById('fb-cfg').value.trim();
-  let cfg;
-  try { cfg = JSON.parse(raw); } catch {
-    document.getElementById('setup-err').textContent = 'Invalid JSON — check the format.'; return;
-  }
-  if (!cfg.projectId) { document.getElementById('setup-err').textContent = 'Missing projectId.'; return; }
-  document.getElementById('setup-err').textContent = '';
-  await saveCfg(cfg);
-  connectFirebase(cfg);
-};
-
-function connectFirebase(cfg) {
-  try {
-    const existing = getApps().find(a => a.name === 'gratified-ops');
-    const app = existing || initializeApp(cfg, 'gratified-ops');
-    firestore = getFirestore(app);
-    document.getElementById('setup').style.display = 'none';
-    startSync();
-  } catch (e) {
-    document.getElementById('setup-err').textContent = 'Firebase error: ' + e.message;
-  }
-}
-
+/* ──────── PERSISTENCE (Realtime Database) ──────── */
 function startSync() {
-  if (!firestore) return;
-  onSnapshot(doc(firestore, 'ops-board', 'state'), snap => {
-    if (snap.exists()) {
-      db = snap.data();
-      COLS.forEach(c => { if (!db.columns?.[c.id]) db.columns[c.id] = []; });
-      if (!db.tasks) db.tasks = {};
+  onValue(stateRef, snap => {
+    const val = snap.val();
+    if (val) {
+      db = val;
+      db.tasks = db.tasks || {};
+      db.columns = db.columns || {};
+      COLS.forEach(c => { if (!db.columns[c.id]) db.columns[c.id] = []; });
     }
     populateLabelSel();
     render();
-  }, err => console.error('Firestore:', err));
+  }, err => console.error('RTDB read error:', err));
 }
 
-window.skipToLocal = function () {
-  localMode = true;
-  document.getElementById('setup').style.display = 'none';
-  try {
-    const raw = localStorage.getItem(LOCAL_KEY);
-    if (raw) {
-      db = JSON.parse(raw);
-      COLS.forEach(c => { if (!db.columns?.[c.id]) db.columns[c.id] = []; });
-      if (!db.tasks) db.tasks = {};
-    }
-  } catch {}
-  populateLabelSel(); render();
-};
-
 async function save() {
-  if (firestore) {
-    try { await setDoc(doc(firestore, 'ops-board', 'state'), JSON.parse(JSON.stringify(db))); }
-    catch (e) { console.error('save:', e); }
-  } else if (localMode) {
-    try { localStorage.setItem(LOCAL_KEY, JSON.stringify(db)); } catch {}
+  try {
+    await set(stateRef, JSON.parse(JSON.stringify(db)));
+  } catch (e) {
+    console.error('RTDB write error:', e);
   }
 }
 
@@ -958,14 +898,9 @@ function fmtFull(iso) {
 }
 
 /* ──────── INIT ──────── */
-async function init() {
-  populateLabelSel(); render();
-  const cfg = await loadCfg();
-  if (cfg) connectFirebase(cfg);
-  else document.getElementById('setup').style.display = 'flex';
-}
-
-init();
+populateLabelSel();
+render();
+startSync();
 </script>
 </body>
 </html>
