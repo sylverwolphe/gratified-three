@@ -105,22 +105,24 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
   border:1px solid var(--border); border-radius:6px;
   background:var(--surface);
   font-size:12.5px; font-weight:600; color:var(--ink-soft);
-  cursor:pointer; white-space:nowrap; transition:all .15s;
+  cursor:pointer; white-space:nowrap; transition:background .15s,border-color .15s,color .15s;
 }
 .proj-pill:hover { border-color:var(--border-2); }
-.proj-pill.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-.proj-count { font-size:10.5px; font-weight:600; opacity:.55; font-variant-numeric:tabular-nums; }
-.proj-pill.active .proj-count { opacity:.8; }
-.proj-del {
-  background:none; border:none; color:#fff; cursor:pointer;
-  font-size:14px; line-height:1; padding:0 0 0 3px; opacity:.65;
+.proj-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.proj-count { font-size:10.5px; font-weight:600; opacity:.6; font-variant-numeric:tabular-nums; }
+.proj-pill.active .proj-count { opacity:.85; }
+.proj-more {
+  background:none; border:none; cursor:pointer; color:var(--ink-dim);
+  font-size:14px; line-height:1; padding:0 0 0 2px; opacity:.7;
 }
-.proj-del:hover { opacity:1; }
+.proj-more:hover { opacity:1; }
 .proj-rename {
-  border:none; outline:none; background:transparent; color:#fff;
-  font-family:var(--font); font-size:12.5px; font-weight:600; width:140px;
+  border:none; outline:none; background:transparent;
+  font-family:var(--font); font-size:12.5px; font-weight:600; width:150px;
 }
-.proj-pill.editing { background:var(--accent); border-color:var(--accent); }
+.proj-pill.archived { opacity:.55; border-style:dashed; }
+.proj-pill.pdrag { opacity:.35; }
+.proj-pill.pdrop { box-shadow:inset 3px 0 0 var(--accent); }
 .proj-add {
   flex-shrink:0; width:27px; height:27px;
   border:1px dashed var(--border-2); border-radius:6px;
@@ -129,6 +131,13 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
   display:flex; align-items:center; justify-content:center; transition:all .12s;
 }
 .proj-add:hover { border-color:var(--accent); color:var(--accent); }
+.proj-arch-toggle {
+  flex-shrink:0; padding:5px 10px;
+  border:1px solid var(--border); border-radius:6px;
+  background:transparent; color:var(--ink-dim);
+  font-size:11.5px; font-weight:600; cursor:pointer; transition:all .12s;
+}
+.proj-arch-toggle:hover { border-color:var(--border-2); color:var(--ink-soft); }
 
 /* ═══════════════════ MOBILE TABS ═══════════════════ */
 .tabbar {
@@ -319,8 +328,10 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
 }
 .btn-primary { background:var(--ink); color:#fff; }
 .btn-primary:hover { background:var(--accent); }
-.btn-ghost { background:transparent; color:var(--ink-soft); border:1px solid var(--border); }
+.btn-ghost { background:transparent; color:var(--ink-soft); border:1px solid var(--border-2); }
 .btn-ghost:hover { border-color:var(--ink-soft); color:var(--ink); }
+.btn-ghost:disabled { opacity:.4; cursor:default; }
+.btn-ghost:disabled:hover { border-color:var(--border-2); color:var(--ink-soft); }
 .btn-danger { background:transparent; color:var(--hi); border:1px solid var(--hi); }
 .btn-danger:hover { background:var(--hi); color:#fff; }
 
@@ -435,6 +446,17 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
 }
 .add-sub-btn:hover { color:var(--accent); }
 
+/* Colour swatches (project settings) */
+.swatch-row { display:flex; flex-wrap:wrap; gap:9px; }
+.swatch {
+  width:30px; height:30px; border-radius:50%;
+  border:none; cursor:pointer;
+  box-shadow:0 0 0 1px var(--border-2);
+  transition:transform .1s, box-shadow .12s;
+}
+.swatch:hover { transform:scale(1.08); }
+.swatch.on { box-shadow:0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
+
 /* ═══════════════════ GATE ═══════════════════ */
 .gate {
   position:fixed; inset:0; z-index:900;
@@ -518,7 +540,7 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
 <!-- BOARD -->
 <div class="board" id="board"></div>
 
-<!-- MODAL -->
+<!-- TASK MODAL -->
 <div class="backdrop" id="backdrop" style="display:none" onclick="backdropClick(event)">
   <div class="modal">
     <div class="modal-head">
@@ -527,6 +549,18 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
     </div>
     <div class="modal-body" id="modal-body"></div>
     <div class="modal-foot" id="modal-foot"></div>
+  </div>
+</div>
+
+<!-- PROJECT SETTINGS MODAL -->
+<div class="backdrop" id="proj-backdrop" style="display:none" onclick="projBackdropClick(event)">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-head">
+      <span class="modal-eyebrow" id="proj-eyebrow">Project</span>
+      <button class="modal-close" onclick="closeProjSettings()">×</button>
+    </div>
+    <div class="modal-body" id="proj-body"></div>
+    <div class="modal-foot" id="proj-foot"></div>
   </div>
 </div>
 
@@ -578,7 +612,23 @@ const LABELS    = ['supply','ops','event','art','finance','menu','community','he
 const PRI_COLOR = { high:'#C4501E', medium:'#B8792E', low:'#8C826A' };
 const SUB_COLLAPSE_AT = 6;
 const GATE_WORD = 'rabbit';
-const SEED_PROJECTS = ['Wedding coffee cart', 'Protest slushies', 'Cafe'];
+
+/* your palette */
+const PALETTE = [
+  { name:'Deep red',     hex:'#722F37' },
+  { name:'Bright orange',hex:'#CC5500' },
+  { name:'Warm amber',   hex:'#D2691E' },
+  { name:'Olive bronze', hex:'#6B5740' },
+  { name:'Cream',        hex:'#EDE8E0' },
+  { name:'Charcoal',     hex:'#3C3C3C' },
+  { name:'Golden sand',  hex:'#E6C89C' },
+];
+const DEFAULT_COLOR = '#722F37';
+const SEED = [
+  { name:'Wedding coffee cart', color:'#D2691E' },
+  { name:'Protest slushies',    color:'#CC5500' },
+  { name:'Cafe',                color:'#722F37' },
+];
 
 /* ──────── SAFE DEVICE STORAGE ──────── */
 const mem = {};
@@ -603,19 +653,40 @@ const store = {
 /* ──────── STATE ──────── */
 let db = { projects:{}, projectOrder:[] };
 let activeProject   = null;   // local / per-device
-let openId          = null;
-let drag            = null;
+let openId          = null;   // task modal
+let openProj        = null;   // project settings modal
+let drag            = null;   // task drag
+let projDrag        = null;   // project pill drag
 let subTarget       = null;
 let flt             = { search:'', pri:'', label:'' };
 let activeMobileCol = 'ideas';
 let expandedSubs    = new Set();
 let renamingPid     = null;
+let showArchived    = false;
 let syncStarted     = false;
 
+/* ──────── HELPERS ──────── */
+function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function esc(s='') {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtDate(d) { return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function fmtFull(iso) { return iso ? new Date(iso).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : ''; }
+/* readable text colour for a given background */
+function readableText(hex) {
+  const c = String(hex||'').replace('#','');
+  if (c.length < 6) return '#ffffff';
+  const r=parseInt(c.slice(0,2),16), g=parseInt(c.slice(2,4),16), b=parseInt(c.slice(4,6),16);
+  const L=(0.299*r+0.587*g+0.114*b)/255;
+  return L > 0.62 ? '#3C3C3C' : '#ffffff';
+}
+
 /* ──────── PROJECT MODEL ──────── */
-function makeProject(name) {
+function makeProject(name, color) {
   return {
     id: uid(), name,
+    color: color || DEFAULT_COLOR,
+    archived: false,
     tasks: {},
     columns: Object.fromEntries(COLS.map(c => [c.id, []])),
     createdAt: new Date().toISOString(),
@@ -623,9 +694,7 @@ function makeProject(name) {
 }
 function activeProj() { return db.projects?.[activeProject] || null; }
 
-/* Migrate/repair whatever comes back from Firebase into the projects shape. */
 function normalize(val) {
-  // Already in the new shape → just repair integrity.
   if (val && val.projects && Object.keys(val.projects).length) {
     val.projectOrder = Array.isArray(val.projectOrder) ? val.projectOrder : Object.keys(val.projects);
     Object.keys(val.projects).forEach(id => { if (!val.projectOrder.includes(id)) val.projectOrder.push(id); });
@@ -634,22 +703,23 @@ function normalize(val) {
       p.tasks = p.tasks || {};
       p.columns = p.columns || {};
       COLS.forEach(c => { if (!Array.isArray(p.columns[c.id])) p.columns[c.id] = []; });
+      if (!p.color) p.color = DEFAULT_COLOR;
+      if (typeof p.archived !== 'boolean') p.archived = false;
     });
     return { data: val, changed: false };
   }
 
-  // Fresh build (first run, or migrating the old flat {tasks,columns} board).
   const projects = {}, order = [];
   const push = p => { projects[p.id] = p; order.push(p.id); };
 
   if (val && val.tasks && Object.keys(val.tasks).length) {
-    const p = makeProject('General');
+    const p = makeProject('General', DEFAULT_COLOR);
     p.tasks = val.tasks;
     p.columns = val.columns || p.columns;
     COLS.forEach(c => { if (!Array.isArray(p.columns[c.id])) p.columns[c.id] = []; });
     push(p);
   }
-  SEED_PROJECTS.forEach(n => push(makeProject(n)));
+  SEED.forEach(s => push(makeProject(s.name, s.color)));
 
   return { data: { projects, projectOrder: order }, changed: true };
 }
@@ -659,13 +729,15 @@ function startSync() {
   onValue(stateRef, snap => {
     const { data, changed } = normalize(snap.val());
     db = data;
-    if (!activeProject || !db.projects[activeProject]) {
+    if (!activeProject || !db.projects[activeProject] || db.projects[activeProject].archived) {
       const saved = store.get('activeProject');
-      activeProject = (saved && db.projects[saved]) ? saved : db.projectOrder[0];
+      const savedOk = saved && db.projects[saved] && !db.projects[saved].archived;
+      activeProject = savedOk ? saved
+        : (db.projectOrder.find(id => !db.projects[id].archived) || db.projectOrder[0]);
     }
     populateLabelSel();
     render();
-    if (changed) save();   // persist migration/seed once; won't loop (next read is already normalized)
+    if (changed) save();
   }, err => console.error('RTDB read error:', err));
 }
 async function save() {
@@ -673,9 +745,9 @@ async function save() {
   catch (e) { console.error('RTDB write error:', e); }
 }
 
-/* ──────── FOCUS PRESERVATION (keeps you typing across re-renders) ──────── */
+/* ──────── FOCUS PRESERVATION ──────── */
 function cssEsc(s){ return (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/["\\]/g,'\\$&'); }
-function isTransientKey(k){ return k.startsWith('quick:') || k.startsWith('subadd:') || k.startsWith('rename:'); }
+function isTransientKey(k){ return k.startsWith('quick:') || k.startsWith('subadd:') || k.startsWith('rename:') || k.startsWith('projname:'); }
 function captureFocus() {
   const el = document.activeElement;
   if (!el || !el.getAttribute) return null;
@@ -750,28 +822,89 @@ function renderStats() {
 function renderProjects() {
   const bar = document.getElementById('projbar');
   if (!bar) return;
-  const pills = (db.projectOrder||[]).map(pid => {
+  const order = db.projectOrder || [];
+  const mainIds = order.filter(pid => db.projects[pid] && (!db.projects[pid].archived || pid === activeProject));
+  const archIds = order.filter(pid => db.projects[pid] && db.projects[pid].archived && pid !== activeProject);
+
+  const pill = (pid) => {
     const p = db.projects[pid];
-    if (!p) return '';
     const active = pid === activeProject;
+    const color = p.color || DEFAULT_COLOR;
     const count = Object.keys(p.tasks||{}).length;
     if (renamingPid === pid) {
-      return `<div class="proj-pill active editing">
+      return `<div class="proj-pill active editing" style="background:${color};border-color:${color}">
         <input class="proj-rename" data-fkey="rename:${pid}" value="${esc(p.name)}"
-          onkeydown="projRenameKey(event,'${pid}')" onblur="commitRename('${pid}',this.value)">
-      </div>`;
+          style="color:${readableText(color)}"
+          onkeydown="projRenameKey(event,'${pid}')" onblur="commitRename('${pid}',this.value)"></div>`;
     }
-    return `<div class="proj-pill${active?' active':''}"
+    const txt = active ? readableText(color) : 'var(--ink-soft)';
+    return `<div class="proj-pill${active?' active':''}" data-pid="${pid}" draggable="true"
         onclick="switchProject('${pid}')" ondblclick="startRename('${pid}')"
-        title="Click to open · double-click to rename">
+        style="${active?`background:${color};border-color:${color};color:${txt};`:''}"
+        title="Click to open · double-click to rename · drag to reorder">
+      <span class="proj-dot" style="background:${active?txt:color}"></span>
       <span class="proj-name">${esc(p.name)}</span>
       <span class="proj-count">${count}</span>
-      ${active && db.projectOrder.length > 1
-        ? `<button class="proj-del" title="Delete project" onclick="event.stopPropagation();deleteProject('${pid}')">×</button>`
-        : ''}
+      ${active ? `<button class="proj-more" style="color:${txt}" title="Project settings" onclick="event.stopPropagation();openProjectSettings('${pid}')">⋯</button>` : ''}
     </div>`;
-  }).join('');
-  bar.innerHTML = pills + `<button class="proj-add" title="New project" onclick="addProject()">+</button>`;
+  };
+
+  let html = mainIds.map(pill).join('');
+  html += `<button class="proj-add" title="New project" onclick="addProject()">+</button>`;
+
+  if (archIds.length) {
+    html += `<button class="proj-arch-toggle" onclick="toggleArchivedView()">${showArchived?'Hide archived':'Archived ('+archIds.length+')'}</button>`;
+    if (showArchived) {
+      html += archIds.map(pid => {
+        const p = db.projects[pid];
+        const color = p.color || DEFAULT_COLOR;
+        return `<div class="proj-pill archived" data-pid="${pid}" draggable="false"
+            onclick="switchProject('${pid}')" title="Archived — click to view">
+          <span class="proj-dot" style="background:${color}"></span>
+          <span class="proj-name">${esc(p.name)}</span>
+          <button class="proj-more" title="Project settings" onclick="event.stopPropagation();openProjectSettings('${pid}')">⋯</button>
+        </div>`;
+      }).join('');
+    }
+  }
+  bar.innerHTML = html;
+}
+
+/* project-pill drag-to-reorder (delegated, attached once) */
+function attachProjbarDnD() {
+  const bar = document.getElementById('projbar');
+  if (!bar) return;
+  bar.addEventListener('dragstart', e => {
+    const pill = e.target.closest?.('.proj-pill[draggable="true"]');
+    if (!pill) return;
+    projDrag = pill.dataset.pid;
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => pill.classList.add('pdrag'), 0);
+  });
+  bar.addEventListener('dragover', e => {
+    if (!projDrag) return;
+    const pill = e.target.closest?.('.proj-pill[data-pid]');
+    if (!pill || pill.dataset.pid === projDrag) return;
+    e.preventDefault();
+    bar.querySelectorAll('.pdrop').forEach(x => x.classList.remove('pdrop'));
+    pill.classList.add('pdrop');
+  });
+  bar.addEventListener('drop', e => {
+    if (!projDrag) return;
+    const pill = e.target.closest?.('.proj-pill[data-pid]');
+    e.preventDefault();
+    if (pill && pill.dataset.pid !== projDrag) {
+      const order = db.projectOrder;
+      order.splice(order.indexOf(projDrag), 1);
+      order.splice(order.indexOf(pill.dataset.pid), 0, projDrag);
+      save();
+    }
+    projDrag = null; render();
+  });
+  bar.addEventListener('dragend', () => {
+    projDrag = null;
+    bar.querySelectorAll('.pdrag,.pdrop').forEach(x => x.classList.remove('pdrag','pdrop'));
+  });
 }
 
 window.switchProject = function (pid) {
@@ -805,16 +938,106 @@ window.commitRename = function (pid, val) {
   if (p) { val = (val||'').trim(); if (val && val !== p.name) { p.name = val; save(); } }
   render();
 };
-window.deleteProject = function (pid) {
-  if (db.projectOrder.length <= 1) return;
-  if (!confirm('Delete this project and everything in it?')) return;
+window.toggleArchivedView = function () { showArchived = !showArchived; renderProjects(); };
+
+/* ──────── PROJECT SETTINGS MODAL ──────── */
+window.openProjectSettings = function (pid) {
+  openProj = pid; renderProjSettings(pid);
+  document.getElementById('proj-backdrop').style.display = 'flex';
+};
+window.closeProjSettings = function () {
+  document.getElementById('proj-backdrop').style.display = 'none'; openProj = null;
+};
+window.projBackdropClick = function (e) { if (e.target.id === 'proj-backdrop') closeProjSettings(); };
+
+function renderProjSettings(pid) {
+  const p = db.projects[pid];
+  if (!p) return closeProjSettings();
+  const color = p.color || DEFAULT_COLOR;
+  const idx = db.projectOrder.indexOf(pid);
+  const last = db.projectOrder.length - 1;
+  const nonArch = db.projectOrder.filter(id => !db.projects[id].archived).length;
+  const canArchive = p.archived || nonArch > 1;
+
+  document.getElementById('proj-eyebrow').innerHTML =
+    `<div style="width:8px;height:8px;border-radius:50%;background:${color}"></div>Project settings`;
+
+  const swatches = PALETTE.map(c =>
+    `<button class="swatch${color===c.hex?' on':''}" title="${c.name}" style="background:${c.hex}"
+       onclick="setProjColor('${pid}','${c.hex}')"></button>`
+  ).join('');
+
+  document.getElementById('proj-body').innerHTML =
+    `<div>
+       <div class="f-label">Name</div>
+       <input class="f-input" data-fkey="projname:${pid}" value="${esc(p.name)}"
+         oninput="patchProjName('${pid}',this.value)">
+     </div>
+     <div>
+       <div class="f-label">Colour</div>
+       <div class="swatch-row">${swatches}</div>
+     </div>
+     <div class="f-row">
+       <div>
+         <div class="f-label">Order</div>
+         <div style="display:flex;gap:6px;">
+           <button class="btn btn-ghost" ${idx<=0?'disabled':''} onclick="moveProject('${pid}',-1)">‹ Left</button>
+           <button class="btn btn-ghost" ${idx>=last?'disabled':''} onclick="moveProject('${pid}',1)">Right ›</button>
+         </div>
+       </div>
+       <div>
+         <div class="f-label">${p.archived?'Archived':'Archive'}</div>
+         <button class="btn btn-ghost" ${canArchive?'':'disabled'} onclick="toggleArchiveProject('${pid}')">
+           ${p.archived?'Unarchive':'Archive'}</button>
+       </div>
+     </div>
+     <div class="meta-text">Position ${idx+1} of ${db.projectOrder.length} · created ${fmtFull(p.createdAt)}</div>`;
+
+  document.getElementById('proj-foot').innerHTML =
+    `<button class="btn btn-danger" onclick="deleteProjectConfirm('${pid}')">Delete project</button>
+     <button class="btn btn-primary" onclick="closeProjSettings()">Done</button>`;
+}
+
+window.patchProjName = function (pid, val) {
+  const p = db.projects[pid]; if (!p) return;
+  p.name = val; save(); renderProjects();
+};
+window.setProjColor = function (pid, hex) {
+  const p = db.projects[pid]; if (!p) return;
+  p.color = hex; save(); renderProjects(); renderProjSettings(pid);
+};
+window.moveProject = function (pid, dir) {
+  const order = db.projectOrder;
+  const i = order.indexOf(pid), j = i + dir;
+  if (i < 0 || j < 0 || j >= order.length) return;
+  [order[i], order[j]] = [order[j], order[i]];
+  save(); renderProjects(); renderProjSettings(pid);
+};
+window.toggleArchiveProject = function (pid) {
+  const p = db.projects[pid]; if (!p) return;
+  if (!p.archived) {
+    const nonArch = db.projectOrder.filter(id => !db.projects[id].archived).length;
+    if (nonArch <= 1) { alert('Keep at least one active project — add another before archiving this one.'); return; }
+    p.archived = true;
+    if (activeProject === pid) {
+      activeProject = db.projectOrder.find(id => !db.projects[id].archived);
+      store.set('activeProject', activeProject);
+    }
+  } else {
+    p.archived = false;
+  }
+  save(); render(); renderProjSettings(pid);
+};
+window.deleteProjectConfirm = function (pid) {
+  if (db.projectOrder.length <= 1) { alert('Can’t delete your only project.'); return; }
+  if (!confirm('Delete this project and everything in it? This cannot be undone.')) return;
   delete db.projects[pid];
   db.projectOrder = db.projectOrder.filter(x => x !== pid);
   if (activeProject === pid) {
-    activeProject = db.projectOrder[0];
+    activeProject = db.projectOrder.find(id => !db.projects[id].archived) || db.projectOrder[0];
     store.set('activeProject', activeProject);
   }
-  save(); render();
+  closeProjSettings(); save(); render();
 };
 
 /* ──────── MOBILE COLUMN TABS ──────── */
@@ -890,7 +1113,7 @@ function buildCol(col, p) {
   qi.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
       const title = qi.value.trim();
-      qi.value = '';                       // clear first, then add + re-focus
+      qi.value = '';
       if (title) quickAddTask(col.id, title);
     }
     if (e.key === 'Escape') { qi.value = ''; qi.blur(); }
@@ -999,7 +1222,7 @@ function buildCard(task, col) {
   return card;
 }
 
-window.expandSubs = function (taskId) { expandedSubs.add(taskId); renderBoard(); };
+window.expandSubs = function (taskId) { expandedSubs.add(taskId); render(); };
 
 function clearSubTarget() {
   if (subTarget) {
@@ -1018,7 +1241,7 @@ function quickAddTask(colId, title) {
     column:colId, createdAt:new Date().toISOString(),
   };
   p.columns[colId] = [...(p.columns[colId]||[]), id];
-  save(); render();   // render() re-focuses the (now empty) quick-add so you keep typing
+  save(); render();
 }
 
 /* ──────── COLLAPSE CARD → SUBTASK ──────── */
@@ -1059,7 +1282,6 @@ window.deleteTask = function (taskId) {
   if (openId === taskId) closeModal();
 };
 
-/* Move a task to a different project (keeps its column). */
 window.moveTaskToProject = function (taskId, targetPid) {
   const src = activeProj(); if (!src) return;
   const t = src.tasks?.[taskId]; if (!t) return;
@@ -1078,17 +1300,17 @@ window.moveTaskToProject = function (taskId, targetPid) {
 window.toggleSubInline = function (taskId, subId) {
   const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t) return;
   const s = (t.subtasks||[]).find(x => x.id===subId);
-  if (s) { s.done=!s.done; save(); renderBoard(); if (openId===taskId) renderModal(taskId); }
+  if (s) { s.done=!s.done; save(); render(); if (openId===taskId) renderModal(taskId); }
 };
 window.patchSubInline = function (taskId, subId, value) {
   const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t) return;
   const s = (t.subtasks||[]).find(x => x.id===subId);
-  if (s && s.title!==value) { s.title=value; save(); renderBoard(); if (openId===taskId) renderModal(taskId); }
+  if (s && s.title!==value) { s.title=value; save(); render(); if (openId===taskId) renderModal(taskId); }
 };
 window.deleteSubInline = function (taskId, subId) {
   const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t) return;
   t.subtasks = (t.subtasks||[]).filter(x => x.id!==subId);
-  save(); renderBoard(); if (openId===taskId) renderModal(taskId);
+  save(); render(); if (openId===taskId) renderModal(taskId);
 };
 window.addSubInline = function (taskId, title) {
   title = (title||'').trim(); if (!title) return;
@@ -1096,9 +1318,10 @@ window.addSubInline = function (taskId, title) {
   t.subtasks = t.subtasks||[];
   t.subtasks.push({ id:uid(), title, done:false });
   expandedSubs.add(taskId);
-  save(); renderBoard(); if (openId===taskId) renderModal(taskId);
+  save(); render();                       // focus-preserving → cursor stays in "+ subtask"
+  if (openId===taskId) renderModal(taskId);
 };
-/* clear first, then add → the re-focused sub-add stays empty so you keep listing */
+/* clear first, then add → the re-focused "+ subtask" box stays empty so you keep listing */
 window.subAddKey = function (e, taskId) {
   if (e.key === 'Enter') {
     const v = e.target.value.trim();
@@ -1107,7 +1330,7 @@ window.subAddKey = function (e, taskId) {
   }
 };
 
-/* ──────── MODAL ──────── */
+/* ──────── TASK MODAL ──────── */
 function openModal(taskId) {
   openId = taskId; renderModal(taskId);
   document.getElementById('backdrop').style.display = 'flex';
@@ -1206,7 +1429,7 @@ function renderModal(taskId) {
 
 window.patchField = function (taskId, field, value) {
   const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t) return;
-  t[field] = value; save(); renderStats(); renderProjects(); renderBoard();
+  t[field] = value; save(); renderStats(); renderBoard();
 };
 window.setPri = function (taskId, pri) {
   const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t) return;
@@ -1243,19 +1466,6 @@ window.toggleSub = function (taskId, subId) { toggleSubInline(taskId, subId); };
 window.patchSub  = function (taskId, subId, value) { patchSubInline(taskId, subId, value); };
 window.deleteSub = function (taskId, subId) { deleteSubInline(taskId, subId); };
 
-/* ──────── UTILS ──────── */
-function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2); }
-function esc(s='') {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function fmtDate(d) {
-  return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
-}
-function fmtFull(iso) {
-  if (!iso) return '';
-  return new Date(iso).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-}
-
 /* ──────── GATE (cover password) ──────── */
 function gateVisible() { return document.getElementById('gate').style.display !== 'none'; }
 function revealApp() {
@@ -1266,19 +1476,14 @@ window.submitGate = function () {
   const inp = document.getElementById('gate-input');
   const err = document.getElementById('gate-err');
   const v = (inp.value||'').trim().toLowerCase();
-  if (v === GATE_WORD) {
-    store.set('gate-ok', '1');
-    revealApp();
-  } else {
+  if (v === GATE_WORD) { store.set('gate-ok', '1'); revealApp(); }
+  else {
     err.textContent = 'Nope, try again.';
     inp.classList.remove('err'); void inp.offsetWidth; inp.classList.add('err');
     inp.value = ''; inp.focus();
   }
 };
-window.lockApp = function () {
-  store.del('gate-ok');
-  location.reload();
-};
+window.lockApp = function () { store.del('gate-ok'); location.reload(); };
 function checkGate() {
   if (store.get('gate-ok') === '1') { revealApp(); }
   else { setTimeout(() => document.getElementById('gate-input')?.focus(), 60); }
@@ -1297,12 +1502,13 @@ document.addEventListener('keydown', e => {
                document.querySelector('.quick-add');
     el?.focus();
   }
-  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Escape') { closeModal(); closeProjSettings(); }
 });
 
 /* ──────── INIT ──────── */
 populateLabelSel();
-checkGate();   // shows the password cover, then starts the live board once unlocked
+attachProjbarDnD();
+checkGate();
 </script>
 </body>
 </html>
