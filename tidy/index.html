@@ -71,12 +71,6 @@ body {
 .ctrl::placeholder { color:var(--ink-dim); }
 input.ctrl  { width:180px; max-width:40vw; }
 select.ctrl { cursor:pointer; color:var(--ink-soft); }
-.kbd-hint {
-  font-size:10px; color:var(--ink-dim);
-  border:1px solid var(--border); border-radius:3px;
-  padding:0px 4px; margin-left:-30px; pointer-events:none;
-  background:var(--surface);
-}
 .search-wrap { position:relative; display:flex; align-items:center; }
 
 .hstats {
@@ -87,6 +81,55 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
 .hstats strong { color:var(--ink-soft); font-weight:700; }
 .hstats .warn { color:var(--hi); font-weight:700; }
 
+.lockbtn {
+  flex-shrink:0; padding:4px 9px; font-size:11px; font-weight:600;
+  border:1px solid var(--border); border-radius:var(--radius);
+  background:var(--surface); color:var(--ink-soft); cursor:pointer;
+  transition:all .12s;
+}
+.lockbtn:hover { border-color:var(--ink-soft); color:var(--ink); }
+
+/* ═══════════════════ PROJECT BAR ═══════════════════ */
+.projbar {
+  display:flex; align-items:center; gap:6px;
+  padding:7px 14px;
+  overflow-x:auto; -webkit-overflow-scrolling:touch;
+  background:var(--bg); border-bottom:1px solid var(--border);
+  position:sticky; top:50px; z-index:196;
+  scrollbar-width:none;
+}
+.projbar::-webkit-scrollbar { display:none; }
+.proj-pill {
+  flex-shrink:0; display:flex; align-items:center; gap:6px;
+  padding:5px 10px;
+  border:1px solid var(--border); border-radius:6px;
+  background:var(--surface);
+  font-size:12.5px; font-weight:600; color:var(--ink-soft);
+  cursor:pointer; white-space:nowrap; transition:all .15s;
+}
+.proj-pill:hover { border-color:var(--border-2); }
+.proj-pill.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+.proj-count { font-size:10.5px; font-weight:600; opacity:.55; font-variant-numeric:tabular-nums; }
+.proj-pill.active .proj-count { opacity:.8; }
+.proj-del {
+  background:none; border:none; color:#fff; cursor:pointer;
+  font-size:14px; line-height:1; padding:0 0 0 3px; opacity:.65;
+}
+.proj-del:hover { opacity:1; }
+.proj-rename {
+  border:none; outline:none; background:transparent; color:#fff;
+  font-family:var(--font); font-size:12.5px; font-weight:600; width:140px;
+}
+.proj-pill.editing { background:var(--accent); border-color:var(--accent); }
+.proj-add {
+  flex-shrink:0; width:27px; height:27px;
+  border:1px dashed var(--border-2); border-radius:6px;
+  background:transparent; color:var(--ink-dim);
+  font-size:16px; line-height:1; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:all .12s;
+}
+.proj-add:hover { border-color:var(--accent); color:var(--accent); }
+
 /* ═══════════════════ MOBILE TABS ═══════════════════ */
 .tabbar {
   display:none;
@@ -94,7 +137,7 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
   overflow-x:auto; -webkit-overflow-scrolling:touch;
   background:var(--bg);
   border-bottom:1px solid var(--border);
-  position:sticky; top:50px; z-index:190;
+  position:sticky; top:91px; z-index:190;
   scrollbar-width:none;
 }
 .tabbar::-webkit-scrollbar { display:none; }
@@ -127,7 +170,7 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
 .col {
   display:flex; flex-direction:column;
   background:var(--bg);
-  max-height:calc(100vh - 51px);
+  max-height:calc(100vh - 92px);
   min-width:0;
 }
 
@@ -392,12 +435,39 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
 }
 .add-sub-btn:hover { color:var(--accent); }
 
+/* ═══════════════════ GATE ═══════════════════ */
+.gate {
+  position:fixed; inset:0; z-index:900;
+  background:var(--bg);
+  display:flex; align-items:center; justify-content:center; padding:20px;
+}
+.gate-card {
+  width:100%; max-width:320px; text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+}
+.gate-brand { display:flex; align-items:center; gap:8px; }
+.gate-brand .brand-mark { width:11px; height:11px; }
+.gate-brand span { font-size:19px; font-weight:700; letter-spacing:-.3px; }
+.gate-sub { font-size:12.5px; color:var(--ink-dim); margin-bottom:4px; }
+.gate-input {
+  width:100%; padding:9px 11px;
+  border:1px solid var(--border-2); border-radius:var(--radius);
+  font-size:14px; text-align:center; letter-spacing:1px;
+  background:var(--surface); color:var(--ink); outline:none;
+  transition:border-color .15s;
+}
+.gate-input:focus { border-color:var(--accent); }
+.gate-input.err { border-color:var(--hi); animation:shake .3s; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+.gate-btn { width:100%; padding:9px; }
+.gate-err { font-size:11.5px; color:var(--hi); min-height:14px; font-weight:600; }
+.gate-note { font-size:10.5px; color:var(--ink-dim); margin-top:2px; }
+
 /* ═══════════════════ RESPONSIVE ═══════════════════ */
 @media (max-width: 860px) {
   .hcontrols input.ctrl { display:none; }
   .hcontrols select.ctrl { display:none; }
   .header { gap:8px; }
-  .header-search-toggle { display:flex; }
   .tabbar { display:flex; }
 
   .board {
@@ -405,16 +475,12 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
   }
   .col {
     display:none;
-    max-height:calc(100vh - 93px);
+    max-height:calc(100vh - 134px);
   }
   .col.active-mobile { display:flex; }
   .col-header { padding:10px 14px 6px; }
   .quick-add-row { padding:0 12px 8px; }
   .col-body { padding:0 12px 14px; }
-}
-
-@media (min-width: 861px) {
-  .mobile-search { display:none; }
 }
 </style>
 </head>
@@ -440,9 +506,13 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
     <select class="ctrl" id="filtLabel" onchange="applyFilter()"></select>
   </div>
   <div class="hstats" id="stats"></div>
+  <button class="lockbtn" onclick="lockApp()" title="Lock this device">Lock</button>
 </header>
 
-<!-- MOBILE TABS -->
+<!-- PROJECT BAR -->
+<div class="projbar" id="projbar"></div>
+
+<!-- MOBILE COLUMN TABS -->
 <div class="tabbar" id="tabbar"></div>
 
 <!-- BOARD -->
@@ -457,6 +527,19 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
     </div>
     <div class="modal-body" id="modal-body"></div>
     <div class="modal-foot" id="modal-foot"></div>
+  </div>
+</div>
+
+<!-- GATE -->
+<div class="gate" id="gate" style="display:flex">
+  <div class="gate-card">
+    <div class="gate-brand"><div class="brand-mark"></div><span>Gratified</span></div>
+    <div class="gate-sub">This board is private.</div>
+    <input id="gate-input" class="gate-input" type="password" placeholder="Password"
+      autocomplete="off" onkeydown="if(event.key==='Enter')submitGate()">
+    <div class="gate-err" id="gate-err"></div>
+    <button class="btn btn-primary gate-btn" onclick="submitGate()">Enter</button>
+    <div class="gate-note">You'll only be asked once on this device.</div>
   </div>
 </div>
 
@@ -494,37 +577,127 @@ const COLS = [
 const LABELS    = ['supply','ops','event','art','finance','menu','community','health','staff','urgent'];
 const PRI_COLOR = { high:'#C4501E', medium:'#B8792E', low:'#8C826A' };
 const SUB_COLLAPSE_AT = 6;
+const GATE_WORD = 'rabbit';
+const SEED_PROJECTS = ['Wedding coffee cart', 'Protest slushies', 'Cafe'];
 
-/* ──────── STATE ──────── */
-let db = {
-  tasks:   {},
-  columns: Object.fromEntries(COLS.map(c => [c.id, []])),
+/* ──────── SAFE DEVICE STORAGE ──────── */
+const mem = {};
+const store = {
+  get(k){
+    try { const v = localStorage.getItem(k);   if (v !== null) return v; } catch(e){}
+    try { const v = sessionStorage.getItem(k); if (v !== null) return v; } catch(e){}
+    return (k in mem) ? mem[k] : null;
+  },
+  set(k,v){
+    try { localStorage.setItem(k,v);   return; } catch(e){}
+    try { sessionStorage.setItem(k,v); return; } catch(e){}
+    mem[k] = v;
+  },
+  del(k){
+    try { localStorage.removeItem(k);   } catch(e){}
+    try { sessionStorage.removeItem(k); } catch(e){}
+    delete mem[k];
+  }
 };
 
-let openId        = null;
-let drag           = null;
+/* ──────── STATE ──────── */
+let db = { projects:{}, projectOrder:[] };
+let activeProject   = null;   // local / per-device
+let openId          = null;
+let drag            = null;
 let subTarget       = null;
-let flt            = { search:'', pri:'', label:'' };
+let flt             = { search:'', pri:'', label:'' };
 let activeMobileCol = 'ideas';
 let expandedSubs    = new Set();
+let renamingPid     = null;
+let syncStarted     = false;
+
+/* ──────── PROJECT MODEL ──────── */
+function makeProject(name) {
+  return {
+    id: uid(), name,
+    tasks: {},
+    columns: Object.fromEntries(COLS.map(c => [c.id, []])),
+    createdAt: new Date().toISOString(),
+  };
+}
+function activeProj() { return db.projects?.[activeProject] || null; }
+
+/* Migrate/repair whatever comes back from Firebase into the projects shape. */
+function normalize(val) {
+  // Already in the new shape → just repair integrity.
+  if (val && val.projects && Object.keys(val.projects).length) {
+    val.projectOrder = Array.isArray(val.projectOrder) ? val.projectOrder : Object.keys(val.projects);
+    Object.keys(val.projects).forEach(id => { if (!val.projectOrder.includes(id)) val.projectOrder.push(id); });
+    val.projectOrder = val.projectOrder.filter(id => val.projects[id]);
+    Object.values(val.projects).forEach(p => {
+      p.tasks = p.tasks || {};
+      p.columns = p.columns || {};
+      COLS.forEach(c => { if (!Array.isArray(p.columns[c.id])) p.columns[c.id] = []; });
+    });
+    return { data: val, changed: false };
+  }
+
+  // Fresh build (first run, or migrating the old flat {tasks,columns} board).
+  const projects = {}, order = [];
+  const push = p => { projects[p.id] = p; order.push(p.id); };
+
+  if (val && val.tasks && Object.keys(val.tasks).length) {
+    const p = makeProject('General');
+    p.tasks = val.tasks;
+    p.columns = val.columns || p.columns;
+    COLS.forEach(c => { if (!Array.isArray(p.columns[c.id])) p.columns[c.id] = []; });
+    push(p);
+  }
+  SEED_PROJECTS.forEach(n => push(makeProject(n)));
+
+  return { data: { projects, projectOrder: order }, changed: true };
+}
 
 /* ──────── SYNC ──────── */
 function startSync() {
   onValue(stateRef, snap => {
-    const val = snap.val();
-    if (val) {
-      db = val;
-      db.tasks = db.tasks || {};
-      db.columns = db.columns || {};
-      COLS.forEach(c => { if (!db.columns[c.id]) db.columns[c.id] = []; });
+    const { data, changed } = normalize(snap.val());
+    db = data;
+    if (!activeProject || !db.projects[activeProject]) {
+      const saved = store.get('activeProject');
+      activeProject = (saved && db.projects[saved]) ? saved : db.projectOrder[0];
     }
     populateLabelSel();
     render();
+    if (changed) save();   // persist migration/seed once; won't loop (next read is already normalized)
   }, err => console.error('RTDB read error:', err));
 }
 async function save() {
   try { await set(stateRef, JSON.parse(JSON.stringify(db))); }
   catch (e) { console.error('RTDB write error:', e); }
+}
+
+/* ──────── FOCUS PRESERVATION (keeps you typing across re-renders) ──────── */
+function cssEsc(s){ return (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/["\\]/g,'\\$&'); }
+function isTransientKey(k){ return k.startsWith('quick:') || k.startsWith('subadd:') || k.startsWith('rename:'); }
+function captureFocus() {
+  const el = document.activeElement;
+  if (!el || !el.getAttribute) return null;
+  const key = el.getAttribute('data-fkey');
+  if (!key) return null;
+  let start = null, end = null;
+  try { start = el.selectionStart; end = el.selectionEnd; } catch(e){}
+  const transient = isTransientKey(key);
+  return { key, start, end, val: transient ? el.value : null, transient };
+}
+function restoreFocus(f) {
+  if (!f) return;
+  const el = document.querySelector(`[data-fkey="${cssEsc(f.key)}"]`);
+  if (!el) return;
+  if (f.transient && f.val != null && 'value' in el) el.value = f.val;
+  el.focus();
+  try {
+    const len = (el.value || '').length;
+    const s = f.start == null ? len : Math.min(f.start, len);
+    const e = f.end   == null ? len : Math.min(f.end,   len);
+    if (el.setSelectionRange) el.setSelectionRange(s, e);
+  } catch(e){}
 }
 
 /* ──────── FILTER ──────── */
@@ -552,15 +725,20 @@ function visible(t) {
 }
 
 /* ──────── RENDER ──────── */
-function render() { renderStats(); renderTabs(); renderBoard(); }
+function render() {
+  const f = captureFocus();
+  renderStats(); renderProjects(); renderTabs(); renderBoard();
+  restoreFocus(f);
+}
 
 function renderStats() {
-  const tasks   = Object.values(db.tasks||{});
-  const total   = tasks.length;
-  const doneN   = (db.columns?.done||[]).length;
-  const activeN = (db.columns?.inprogress||[]).length;
-  const now     = new Date();
-  const odN     = tasks.filter(t =>
+  const p = activeProj();
+  const tasks = p ? Object.values(p.tasks||{}) : [];
+  const total = tasks.length;
+  const doneN = p ? (p.columns?.done||[]).length : 0;
+  const activeN = p ? (p.columns?.inprogress||[]).length : 0;
+  const now = new Date();
+  const odN = tasks.filter(t =>
     t.dueDate && new Date(t.dueDate+'T00:00:00') < now && t.column !== 'done'
   ).length;
   document.getElementById('stats').innerHTML =
@@ -568,12 +746,85 @@ function renderStats() {
     (odN ? ` · <span class="warn">${odN} overdue</span>` : '');
 }
 
+/* ──────── PROJECT BAR ──────── */
+function renderProjects() {
+  const bar = document.getElementById('projbar');
+  if (!bar) return;
+  const pills = (db.projectOrder||[]).map(pid => {
+    const p = db.projects[pid];
+    if (!p) return '';
+    const active = pid === activeProject;
+    const count = Object.keys(p.tasks||{}).length;
+    if (renamingPid === pid) {
+      return `<div class="proj-pill active editing">
+        <input class="proj-rename" data-fkey="rename:${pid}" value="${esc(p.name)}"
+          onkeydown="projRenameKey(event,'${pid}')" onblur="commitRename('${pid}',this.value)">
+      </div>`;
+    }
+    return `<div class="proj-pill${active?' active':''}"
+        onclick="switchProject('${pid}')" ondblclick="startRename('${pid}')"
+        title="Click to open · double-click to rename">
+      <span class="proj-name">${esc(p.name)}</span>
+      <span class="proj-count">${count}</span>
+      ${active && db.projectOrder.length > 1
+        ? `<button class="proj-del" title="Delete project" onclick="event.stopPropagation();deleteProject('${pid}')">×</button>`
+        : ''}
+    </div>`;
+  }).join('');
+  bar.innerHTML = pills + `<button class="proj-add" title="New project" onclick="addProject()">+</button>`;
+}
+
+window.switchProject = function (pid) {
+  if (!db.projects[pid]) return;
+  activeProject = pid; store.set('activeProject', pid);
+  activeMobileCol = COLS[0].id;
+  render();
+};
+window.addProject = function () {
+  const p = makeProject('New project');
+  db.projects[p.id] = p;
+  db.projectOrder.push(p.id);
+  activeProject = p.id; store.set('activeProject', p.id);
+  save(); render();
+  setTimeout(() => startRename(p.id), 40);
+};
+window.startRename = function (pid) {
+  renamingPid = pid; renderProjects();
+  setTimeout(() => {
+    const el = document.querySelector(`[data-fkey="rename:${pid}"]`);
+    if (el) { el.focus(); el.select(); }
+  }, 20);
+};
+window.projRenameKey = function (e, pid) {
+  if (e.key === 'Enter') e.target.blur();
+  else if (e.key === 'Escape') { renamingPid = null; renderProjects(); }
+};
+window.commitRename = function (pid, val) {
+  const p = db.projects[pid];
+  renamingPid = null;
+  if (p) { val = (val||'').trim(); if (val && val !== p.name) { p.name = val; save(); } }
+  render();
+};
+window.deleteProject = function (pid) {
+  if (db.projectOrder.length <= 1) return;
+  if (!confirm('Delete this project and everything in it?')) return;
+  delete db.projects[pid];
+  db.projectOrder = db.projectOrder.filter(x => x !== pid);
+  if (activeProject === pid) {
+    activeProject = db.projectOrder[0];
+    store.set('activeProject', activeProject);
+  }
+  save(); render();
+};
+
+/* ──────── MOBILE COLUMN TABS ──────── */
 function renderTabs() {
   const bar = document.getElementById('tabbar');
   if (!bar) return;
+  const p = activeProj();
   if (!COLS.find(c=>c.id===activeMobileCol)) activeMobileCol = COLS[0].id;
   bar.innerHTML = COLS.map(c => {
-    const n = (db.columns?.[c.id]||[]).length;
+    const n = p ? (p.columns?.[c.id]||[]).length : 0;
     return `<button class="tab-pill${c.id===activeMobileCol?' active':''}" onclick="setActiveTab('${c.id}')">
       <span class="dot" style="background:${c.id===activeMobileCol?'#fff':c.dot}"></span>${c.label}<span class="n">${n}</span>
     </button>`;
@@ -587,18 +838,21 @@ window.setActiveTab = function (colId) {
   });
 };
 
+/* ──────── BOARD ──────── */
 function renderBoard() {
   const board = document.getElementById('board');
   if (!board) return;
   board.innerHTML = '';
-  COLS.forEach(col => board.appendChild(buildCol(col)));
+  const p = activeProj();
+  if (!p) return;
+  COLS.forEach(col => board.appendChild(buildCol(col, p)));
   const activeEl = board.querySelector(`[data-col="${activeMobileCol}"]`);
   if (activeEl) activeEl.classList.add('active-mobile');
 }
 
-function buildCol(col) {
-  const allIds = db.columns?.[col.id] || [];
-  const visIds = allIds.filter(id => visible(db.tasks?.[id]));
+function buildCol(col, p) {
+  const allIds = p.columns?.[col.id] || [];
+  const visIds = allIds.filter(id => visible(p.tasks?.[id]));
 
   const wrap = document.createElement('div');
   wrap.className = 'col';
@@ -632,11 +886,12 @@ function buildCol(col) {
   qi.type = 'text';
   qi.className = 'quick-add';
   qi.placeholder = '+ task';
-  qi.dataset.colInput = col.id;
+  qi.setAttribute('data-fkey', 'quick:' + col.id);
   qi.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
       const title = qi.value.trim();
-      if (title) { quickAddTask(col.id, title); qi.value = ''; }
+      qi.value = '';                       // clear first, then add + re-focus
+      if (title) quickAddTask(col.id, title);
     }
     if (e.key === 'Escape') { qi.value = ''; qi.blur(); }
   });
@@ -651,7 +906,7 @@ function buildCol(col) {
     empty.textContent = (flt.search||flt.pri||flt.label) ? 'no matches' : 'nothing here — add one above';
     body.appendChild(empty);
   } else {
-    visIds.forEach(id => { const c = buildCard(db.tasks[id], col); if (c) body.appendChild(c); });
+    visIds.forEach(id => { const c = buildCard(p.tasks[id], col); if (c) body.appendChild(c); });
   }
   wrap.appendChild(body);
 
@@ -680,7 +935,7 @@ function buildCard(task, col) {
   const subRowsHtml = showSubs.map(s =>
     `<div class="sub-row${s.done?' done':''}" data-sub="${s.id}">
        <input type="checkbox" class="sub-check" ${s.done?'checked':''} onchange="toggleSubInline('${task.id}','${s.id}')">
-       <input type="text" class="sub-text" value="${esc(s.title)}"
+       <input type="text" class="sub-text" data-fkey="sub:${task.id}:${s.id}" value="${esc(s.title)}"
          onblur="patchSubInline('${task.id}','${s.id}',this.value)"
          onkeydown="if(event.key==='Enter')this.blur()">
        <button class="sub-x" onclick="deleteSubInline('${task.id}','${s.id}')">×</button>
@@ -698,7 +953,8 @@ function buildCard(task, col) {
      <div class="subs" data-subs="${task.id}">
        ${subRowsHtml}
        ${hiddenN > 0 ? `<button class="sub-more" onclick="expandSubs('${task.id}')">+ ${hiddenN} more</button>` : ''}
-       <input type="text" class="sub-add" placeholder="+ subtask" onkeydown="if(event.key==='Enter'){addSubInline('${task.id}',this.value);this.value='';}">
+       <input type="text" class="sub-add" data-fkey="subadd:${task.id}" placeholder="+ subtask"
+         onkeydown="subAddKey(event,'${task.id}')">
      </div>
      <div class="task-footer">
        ${task.dueDate  ? `<span class="task-due${isOD?' overdue':''}">${fmtDate(task.dueDate)}</span>` : ''}
@@ -754,26 +1010,28 @@ function clearSubTarget() {
 
 /* ──────── QUICK ADD ──────── */
 function quickAddTask(colId, title) {
+  const p = activeProj(); if (!p) return;
   const id = uid();
-  db.tasks = db.tasks || {};
-  db.tasks[id] = {
+  p.tasks[id] = {
     id, title, description:'', priority:'medium',
     dueDate:'', labels:[], subtasks:[],
     column:colId, createdAt:new Date().toISOString(),
   };
-  db.columns[colId] = [...(db.columns[colId]||[]), id];
-  save(); render();
+  p.columns[colId] = [...(p.columns[colId]||[]), id];
+  save(); render();   // render() re-focuses the (now empty) quick-add so you keep typing
 }
 
 /* ──────── COLLAPSE CARD → SUBTASK ──────── */
 function collapseToSub(parentId, childId) {
-  const parent = db.tasks?.[parentId];
-  const child  = db.tasks?.[childId];
+  const p = activeProj(); if (!p) return;
+  const parent = p.tasks?.[parentId];
+  const child  = p.tasks?.[childId];
   if (!parent || !child) return;
   parent.subtasks = parent.subtasks || [];
   parent.subtasks.push({ id:uid(), title:child.title, done:false });
-  db.columns[child.column] = (db.columns[child.column]||[]).filter(i => i !== childId);
-  delete db.tasks[childId];
+  p.columns[child.column] = (p.columns[child.column]||[]).filter(i => i !== childId);
+  delete p.tasks[childId];
+  expandedSubs.add(parentId);
   save(); render();
   if (openId === childId)  closeModal();
   if (openId === parentId) renderModal(parentId);
@@ -781,47 +1039,72 @@ function collapseToSub(parentId, childId) {
 
 /* ──────── MOVE / DELETE ──────── */
 function moveTask(taskId, from, to) {
-  if (!to || from === to || !db.tasks?.[taskId]) return;
-  db.tasks[taskId].column = to;
-  db.columns[from] = (db.columns[from]||[]).filter(i => i !== taskId);
-  db.columns[to]   = [...(db.columns[to]||[]), taskId];
+  const p = activeProj(); if (!p) return;
+  if (!to || from === to || !p.tasks?.[taskId]) return;
+  p.tasks[taskId].column = to;
+  p.columns[from] = (p.columns[from]||[]).filter(i => i !== taskId);
+  p.columns[to]   = [...(p.columns[to]||[]), taskId];
   save(); render();
   if (openId === taskId) renderModal(taskId);
 }
 window.moveTask = moveTask;
 
 window.deleteTask = function (taskId) {
-  const col = db.tasks?.[taskId]?.column;
+  const p = activeProj(); if (!p) return;
+  const col = p.tasks?.[taskId]?.column;
   if (!col) return;
-  delete db.tasks[taskId];
-  db.columns[col] = (db.columns[col]||[]).filter(i => i !== taskId);
+  delete p.tasks[taskId];
+  p.columns[col] = (p.columns[col]||[]).filter(i => i !== taskId);
   save(); render();
   if (openId === taskId) closeModal();
 };
 
+/* Move a task to a different project (keeps its column). */
+window.moveTaskToProject = function (taskId, targetPid) {
+  const src = activeProj(); if (!src) return;
+  const t = src.tasks?.[taskId]; if (!t) return;
+  const dst = db.projects[targetPid];
+  if (!dst || targetPid === activeProject) return;
+  const col = t.column;
+  src.columns[col] = (src.columns[col]||[]).filter(i => i !== taskId);
+  delete src.tasks[taskId];
+  dst.tasks[taskId] = t;
+  if (!Array.isArray(dst.columns[col])) dst.columns[col] = [];
+  dst.columns[col] = [...dst.columns[col], taskId];
+  save(); closeModal(); render();
+};
+
 /* ──────── INLINE SUBTASK OPS (on card) ──────── */
 window.toggleSubInline = function (taskId, subId) {
-  const t = db.tasks?.[taskId]; if (!t) return;
+  const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t) return;
   const s = (t.subtasks||[]).find(x => x.id===subId);
   if (s) { s.done=!s.done; save(); renderBoard(); if (openId===taskId) renderModal(taskId); }
 };
 window.patchSubInline = function (taskId, subId, value) {
-  const t = db.tasks?.[taskId]; if (!t) return;
+  const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t) return;
   const s = (t.subtasks||[]).find(x => x.id===subId);
   if (s && s.title!==value) { s.title=value; save(); renderBoard(); if (openId===taskId) renderModal(taskId); }
 };
 window.deleteSubInline = function (taskId, subId) {
-  const t = db.tasks?.[taskId]; if (!t) return;
+  const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t) return;
   t.subtasks = (t.subtasks||[]).filter(x => x.id!==subId);
   save(); renderBoard(); if (openId===taskId) renderModal(taskId);
 };
 window.addSubInline = function (taskId, title) {
   title = (title||'').trim(); if (!title) return;
-  const t = db.tasks?.[taskId]; if (!t) return;
+  const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t) return;
   t.subtasks = t.subtasks||[];
   t.subtasks.push({ id:uid(), title, done:false });
   expandedSubs.add(taskId);
   save(); renderBoard(); if (openId===taskId) renderModal(taskId);
+};
+/* clear first, then add → the re-focused sub-add stays empty so you keep listing */
+window.subAddKey = function (e, taskId) {
+  if (e.key === 'Enter') {
+    const v = e.target.value.trim();
+    e.target.value = '';
+    if (v) addSubInline(taskId, v);
+  }
 };
 
 /* ──────── MODAL ──────── */
@@ -835,7 +1118,8 @@ window.closeModal = function () {
 window.backdropClick = function (e) { if (e.target.id === 'backdrop') closeModal(); };
 
 function renderModal(taskId) {
-  const t = db.tasks?.[taskId];
+  const p = activeProj();
+  const t = p?.tasks?.[taskId];
   if (!t) return closeModal();
   const col = COLS.find(c => c.id === t.column) || COLS[0];
 
@@ -844,6 +1128,10 @@ function renderModal(taskId) {
 
   const colOpts = COLS.map(c =>
     `<option value="${c.id}"${t.column===c.id?' selected':''}>${c.label}</option>`
+  ).join('');
+
+  const projOpts = db.projectOrder.map(pid =>
+    `<option value="${pid}"${pid===activeProject?' selected':''}>${esc(db.projects[pid].name)}</option>`
   ).join('');
 
   const lblBtns = LABELS.map(l =>
@@ -877,9 +1165,9 @@ function renderModal(taskId) {
        <div>
          <div class="f-label">Priority</div>
          <div class="pri-group">
-           ${['high','medium','low'].map(p =>
-             `<button class="pri-btn${t.priority===p?' on':''}" data-p="${p}"
-                onclick="setPri('${taskId}','${p}')"><span class="d" style="background:${t.priority===p?'#fff':PRI_COLOR[p]}"></span>${p==='medium'?'Med':p[0].toUpperCase()+p.slice(1)}</button>`
+           ${['high','medium','low'].map(pr =>
+             `<button class="pri-btn${t.priority===pr?' on':''}" data-p="${pr}"
+                onclick="setPri('${taskId}','${pr}')"><span class="d" style="background:${t.priority===pr?'#fff':PRI_COLOR[pr]}"></span>${pr==='medium'?'Med':pr[0].toUpperCase()+pr.slice(1)}</button>`
            ).join('')}
          </div>
        </div>
@@ -889,9 +1177,15 @@ function renderModal(taskId) {
            onchange="patchField('${taskId}','dueDate',this.value)">
        </div>
      </div>
-     <div>
-       <div class="f-label">Column</div>
-       <select class="f-input" onchange="handleColChange('${taskId}',this.value)">${colOpts}</select>
+     <div class="f-row">
+       <div>
+         <div class="f-label">Column</div>
+         <select class="f-input" onchange="handleColChange('${taskId}',this.value)">${colOpts}</select>
+       </div>
+       <div>
+         <div class="f-label">Project</div>
+         <select class="f-input" onchange="handleProjChange('${taskId}',this.value)">${projOpts}</select>
+       </div>
      </div>
      <div>
        <div class="f-label">Subtasks <span class="f-hint">— also editable right on the board</span></div>
@@ -911,28 +1205,31 @@ function renderModal(taskId) {
 }
 
 window.patchField = function (taskId, field, value) {
-  const t = db.tasks?.[taskId]; if (!t) return;
-  t[field] = value; save(); renderStats(); renderBoard();
+  const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t) return;
+  t[field] = value; save(); renderStats(); renderProjects(); renderBoard();
 };
 window.setPri = function (taskId, pri) {
-  const t = db.tasks?.[taskId]; if (!t) return;
+  const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t) return;
   t.priority = pri; save(); renderBoard(); renderModal(taskId);
 };
 window.toggleLabel = function (taskId, label) {
-  const t = db.tasks?.[taskId]; if (!t) return;
+  const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t) return;
   t.labels = t.labels||[];
   const i = t.labels.indexOf(label);
   if (i>=0) t.labels.splice(i,1); else t.labels.push(label);
   save(); renderBoard(); renderModal(taskId);
 };
 window.handleColChange = function (taskId, newCol) {
-  const t = db.tasks?.[taskId]; if (!t || t.column===newCol) return;
+  const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t || t.column===newCol) return;
   moveTask(taskId, t.column, newCol);
+};
+window.handleProjChange = function (taskId, pid) {
+  if (pid !== activeProject) moveTaskToProject(taskId, pid);
 };
 
 /* ──────── SUBTASK OPS (modal) ──────── */
 window.addSub = function (taskId) {
-  const t = db.tasks?.[taskId]; if (!t) return;
+  const p = activeProj(); const t = p?.tasks?.[taskId]; if (!t) return;
   t.subtasks = t.subtasks||[];
   t.subtasks.push({ id:uid(), title:'', done:false });
   expandedSubs.add(taskId);
@@ -959,15 +1256,44 @@ function fmtFull(iso) {
   return new Date(iso).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 }
 
+/* ──────── GATE (cover password) ──────── */
+function gateVisible() { return document.getElementById('gate').style.display !== 'none'; }
+function revealApp() {
+  document.getElementById('gate').style.display = 'none';
+  if (!syncStarted) { syncStarted = true; startSync(); }
+}
+window.submitGate = function () {
+  const inp = document.getElementById('gate-input');
+  const err = document.getElementById('gate-err');
+  const v = (inp.value||'').trim().toLowerCase();
+  if (v === GATE_WORD) {
+    store.set('gate-ok', '1');
+    revealApp();
+  } else {
+    err.textContent = 'Nope, try again.';
+    inp.classList.remove('err'); void inp.offsetWidth; inp.classList.add('err');
+    inp.value = ''; inp.focus();
+  }
+};
+window.lockApp = function () {
+  store.del('gate-ok');
+  location.reload();
+};
+function checkGate() {
+  if (store.get('gate-ok') === '1') { revealApp(); }
+  else { setTimeout(() => document.getElementById('gate-input')?.focus(), 60); }
+}
+
 /* ──────── KEYBOARD SHORTCUTS ──────── */
 document.addEventListener('keydown', e => {
+  if (gateVisible()) return;
   const tag = (document.activeElement?.tagName||'').toLowerCase();
   const typing = tag==='input' || tag==='textarea' || document.activeElement?.isContentEditable;
   if (typing) return;
   if (e.key === '/') { e.preventDefault(); document.getElementById('search')?.focus(); }
   if (e.key === 'c') {
     e.preventDefault();
-    const el = document.querySelector(`[data-col-input="${activeMobileCol}"]`) ||
+    const el = document.querySelector(`[data-fkey="quick:${activeMobileCol}"]`) ||
                document.querySelector('.quick-add');
     el?.focus();
   }
@@ -976,8 +1302,7 @@ document.addEventListener('keydown', e => {
 
 /* ──────── INIT ──────── */
 populateLabelSel();
-render();
-startSync();
+checkGate();   // shows the password cover, then starts the live board once unlocked
 </script>
 </body>
 </html>
