@@ -485,6 +485,148 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
 .gate-err { font-size:11.5px; color:var(--hi); min-height:14px; font-weight:600; }
 .gate-note { font-size:10.5px; color:var(--ink-dim); margin-top:2px; }
 
+/* ═══════════════════ SCHEDULE ═══════════════════ */
+.calsec { background:var(--bg); border-bottom:1px solid var(--border); }
+.cal-toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:7px; padding:8px 14px 7px; }
+.cal-collapse {
+  width:20px; height:20px; padding:0; border:none; background:none; cursor:pointer;
+  color:var(--ink-dim); font-size:11px; line-height:1;
+  transition:transform .15s, color .12s;
+}
+.cal-collapse:hover { color:var(--ink); }
+.calsec.collapsed .cal-collapse { transform:rotate(-90deg); }
+.cal-title { font-size:13px; font-weight:700; letter-spacing:-.1px; }
+.cal-legend { display:flex; align-items:center; gap:10px; font-size:11px; font-weight:600; color:var(--ink-soft); }
+.cal-legend span { display:inline-flex; align-items:center; }
+.cal-legend i { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:4px; }
+.cal-nav { display:flex; gap:4px; margin-left:auto; }
+.cal-nbtn {
+  height:26px; padding:0 9px; font-size:11.5px; font-weight:600; line-height:1;
+  border:1px solid var(--border); border-radius:var(--radius);
+  background:var(--surface); color:var(--ink-soft); cursor:pointer;
+  display:inline-flex; align-items:center; gap:4px; transition:all .12s;
+}
+.cal-nbtn:hover { border-color:var(--ink-soft); color:var(--ink); }
+.cal-addbtn { background:var(--ink); border-color:var(--ink); color:#fff; font-weight:700; }
+.cal-addbtn:hover { background:var(--accent); border-color:var(--accent); color:#fff; }
+.cal-label { font-size:12px; font-weight:700; color:var(--ink-soft); text-align:center; min-width:92px; font-variant-numeric:tabular-nums; }
+.cal-views { display:flex; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+.cal-viewbtn {
+  height:26px; padding:0 10px; font-size:11.5px; font-weight:600; border:none;
+  background:var(--surface); color:var(--ink-dim); cursor:pointer; transition:all .12s;
+}
+.cal-viewbtn + .cal-viewbtn { border-left:1px solid var(--border); }
+.cal-viewbtn.on { background:var(--ink); color:#fff; }
+.cal-body { padding:0 14px 12px; }
+.calsec.collapsed .cal-body { display:none; }
+
+/* week — easy view */
+.wk-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+.wk-day {
+  background:var(--surface); border:1px solid var(--border); border-radius:6px;
+  padding:7px 7px 6px; min-height:92px;
+  display:flex; flex-direction:column; gap:5px; min-width:0;
+}
+.wk-day.today { border-color:var(--accent); }
+.wk-head { display:flex; align-items:center; gap:5px; }
+.wk-dow { font-size:10px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-dim); }
+.wk-num { font-size:12px; font-weight:700; color:var(--ink-soft); }
+.wk-num.t {
+  background:var(--accent); color:#fff; border-radius:50%;
+  width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; font-size:10.5px;
+}
+.wk-lib { margin-left:auto; font-size:9.5px; color:var(--ink-dim); font-weight:600; white-space:nowrap; }
+.wk-chips { display:flex; flex-direction:column; gap:4px; flex:1; }
+.wk-chip {
+  border:1px solid var(--border); border-radius:4px;
+  padding:3px 6px 3px 7px; cursor:pointer; text-align:left;
+  display:flex; flex-direction:column; gap:1px; transition:border-color .12s;
+}
+.wk-chip:hover { border-color:var(--border-2); }
+.wk-time { font-size:9.5px; font-weight:700; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+.wk-who { font-size:11px; font-weight:600; color:var(--ink); }
+.wk-add {
+  border:1px dashed var(--border-2); background:none; border-radius:4px;
+  color:var(--ink-dim); font-size:12px; cursor:pointer; padding:1px 0 2px; transition:all .12s;
+}
+.wk-add:hover { color:var(--accent); border-color:var(--accent); }
+
+/* week — full-hours grid */
+.hr-wrap { overflow-x:auto; scrollbar-width:thin; scrollbar-color:var(--border-2) transparent; }
+.hr-min { min-width:680px; }
+.hr-scroll {
+  max-height:440px; overflow-y:auto;
+  border:1px solid var(--border); border-radius:6px; background:var(--surface);
+  scrollbar-width:thin; scrollbar-color:var(--border-2) transparent;
+}
+.hr-heads {
+  display:grid; grid-template-columns:46px repeat(7,1fr);
+  position:sticky; top:0; z-index:6; background:var(--surface);
+  border-bottom:1px solid var(--border);
+}
+.hr-dayhead { padding:6px 8px; display:flex; align-items:center; gap:5px; border-left:1px solid var(--border); min-width:0; }
+.hr-dayhead.today { background:var(--accent-soft); }
+.hr-grid { display:grid; grid-template-columns:46px repeat(7,1fr); position:relative; }
+.hr-gutter { position:relative; }
+.hr-lbl { position:absolute; right:6px; font-size:9px; color:var(--ink-dim); font-weight:600; font-variant-numeric:tabular-nums; }
+.hr-col {
+  position:relative; border-left:1px solid var(--border); cursor:copy;
+  background-image:repeating-linear-gradient(to bottom, var(--border) 0 1px, transparent 1px 42px);
+}
+.hr-closed {
+  position:absolute; left:0; right:0; pointer-events:none;
+  background:rgba(36,33,29,.04);
+  background-image:repeating-linear-gradient(135deg, rgba(36,33,29,.05) 0 1px, transparent 1px 8px);
+}
+.hr-shift {
+  position:absolute; left:3px; right:3px; z-index:2;
+  border:1px solid var(--border); border-radius:4px;
+  padding:2px 5px; cursor:pointer; text-align:left; overflow:hidden;
+  display:flex; flex-direction:column;
+}
+.hr-shift:hover { border-color:var(--border-2); z-index:3; }
+.hs-1 { font-size:10px; font-weight:700; color:var(--ink); line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hs-2 { font-size:9px; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+.hr-now { position:absolute; left:0; right:0; height:2px; background:var(--hi); z-index:4; pointer-events:none; }
+.hr-now::before { content:''; position:absolute; left:-2px; top:-2px; width:6px; height:6px; border-radius:50%; background:var(--hi); }
+
+/* month */
+.mo-grid { border:1px solid var(--border); border-radius:6px; overflow:hidden; background:var(--surface); }
+.mo-head { display:grid; grid-template-columns:repeat(7,1fr); border-bottom:1px solid var(--border); }
+.mo-dow { padding:5px 7px; font-size:9.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-dim); }
+.mo-cells { display:grid; grid-template-columns:repeat(7,1fr); grid-auto-rows:minmax(76px,auto); }
+.mo-cell {
+  border-top:1px solid var(--border); border-left:1px solid var(--border);
+  padding:4px 5px; cursor:copy; display:flex; flex-direction:column; gap:3px; min-width:0;
+}
+.mo-cell:nth-child(7n+1) { border-left:none; }
+.mo-cell:nth-child(-n+7) { border-top:none; }
+.mo-cell.out { background:var(--bg); }
+.mo-cell.out .mo-num { opacity:.45; }
+.mo-num {
+  font-size:10.5px; font-weight:700; color:var(--ink-soft);
+  width:17px; height:17px; display:flex; align-items:center; justify-content:center; border-radius:50%;
+}
+.mo-num.t { background:var(--accent); color:#fff; }
+.mo-chip {
+  border:1px solid var(--border); border-radius:3px; cursor:pointer;
+  padding:1px 4px; display:flex; align-items:center; gap:3px; text-align:left; min-width:0;
+}
+.mo-chip:hover { border-color:var(--border-2); }
+.mo-chip .ico { font-size:9px; line-height:1; }
+.mo-chip .t { font-size:9px; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mo-more { font-size:9px; color:var(--ink-dim); font-weight:700; }
+
+/* shift modal extras */
+.preset-row { display:flex; flex-wrap:wrap; gap:6px; }
+.preset {
+  padding:4px 10px; font-size:11px; font-weight:600;
+  border:1px solid var(--border-2); border-radius:12px;
+  background:transparent; color:var(--ink-soft); cursor:pointer; transition:all .12s;
+}
+.preset:hover { border-color:var(--accent); color:var(--accent); }
+.foot-group { display:flex; gap:8px; align-items:center; }
+
 /* ═══════════════════ RESPONSIVE ═══════════════════ */
 @media (max-width: 860px) {
   .hcontrols input.ctrl { display:none; }
@@ -503,6 +645,16 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
   .col-header { padding:10px 14px 6px; }
   .quick-add-row { padding:0 12px 8px; }
   .col-body { padding:0 12px 14px; }
+
+  .cal-toolbar { padding:8px 12px 6px; gap:6px; }
+  .cal-legend { display:none; }
+  .cal-label { min-width:0; }
+  .cal-body { padding:0 12px 10px; }
+  .wk-grid { display:flex; overflow-x:auto; gap:6px; padding-bottom:2px; scrollbar-width:none; }
+  .wk-grid::-webkit-scrollbar { display:none; }
+  .wk-day { flex:0 0 136px; }
+  .mo-cells { grid-auto-rows:minmax(56px,auto); }
+  .mo-chip .t { display:none; }
 }
 </style>
 </head>
@@ -530,6 +682,32 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
   <div class="hstats" id="stats"></div>
   <button class="lockbtn" onclick="lockApp()" title="Lock this device">Lock</button>
 </header>
+
+<!-- SCHEDULE -->
+<section class="calsec" id="calsec">
+  <div class="cal-toolbar">
+    <button class="cal-collapse" onclick="toggleCal()" title="Show / hide the schedule">▾</button>
+    <span class="cal-title">Shifts</span>
+    <span class="cal-legend">
+      <span><i style="background:#722F37"></i>Leah</span>
+      <span><i style="background:#CC5500"></i>Betty</span>
+    </span>
+    <div class="cal-nav">
+      <button class="cal-nbtn" onclick="calShift(-1)" title="Previous">‹</button>
+      <button class="cal-nbtn" onclick="calToday()">Today</button>
+      <button class="cal-nbtn" onclick="calShift(1)" title="Next">›</button>
+    </div>
+    <span class="cal-label" id="cal-label"></span>
+    <div class="cal-views">
+      <button class="cal-viewbtn" data-v="week" onclick="setCalView('week')">Week</button>
+      <button class="cal-viewbtn" data-v="hours" onclick="setCalView('hours')">Hours</button>
+      <button class="cal-viewbtn" data-v="month" onclick="setCalView('month')">Month</button>
+    </div>
+    <button class="cal-nbtn" onclick="exportICS()" title="Download .ics — import into Google / Apple Calendar">⤓ ics</button>
+    <button class="cal-nbtn cal-addbtn" onclick="openShiftModal(null)">+ Shift</button>
+  </div>
+  <div class="cal-body" id="cal-body"></div>
+</section>
 
 <!-- PROJECT BAR -->
 <div class="projbar" id="projbar"></div>
@@ -561,6 +739,18 @@ select.ctrl { cursor:pointer; color:var(--ink-soft); }
     </div>
     <div class="modal-body" id="proj-body"></div>
     <div class="modal-foot" id="proj-foot"></div>
+  </div>
+</div>
+
+<!-- SHIFT MODAL -->
+<div class="backdrop" id="shift-backdrop" style="display:none" onclick="shiftBackdropClick(event)">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-head">
+      <span class="modal-eyebrow" id="shift-eyebrow">Shift</span>
+      <button class="modal-close" onclick="closeShiftModal()">×</button>
+    </div>
+    <div class="modal-body" id="shift-body"></div>
+    <div class="modal-foot" id="shift-foot"></div>
   </div>
 </div>
 
@@ -596,7 +786,8 @@ const firebaseConfig = {
 
 const app  = initializeApp(firebaseConfig);
 const rtdb = getDatabase(app);
-const stateRef = ref(rtdb, 'ops-board/state');
+const stateRef  = ref(rtdb, 'ops-board/state');
+const shiftsRef = ref(rtdb, 'ops-board/shifts');
 
 /* ──────── CONSTANTS ──────── */
 const COLS = [
@@ -612,6 +803,34 @@ const LABELS    = ['supply','ops','event','art','finance','menu','community','he
 const PRI_COLOR = { high:'#C4501E', medium:'#B8792E', low:'#8C826A' };
 const SUB_COLLAPSE_AT = 6;
 const GATE_WORD = 'rabbit';
+
+/* ── schedule constants ── */
+/* SF Main Library hours — 0=Sun … 6=Sat. Edit here if SFPL changes them. */
+const LIB_HOURS = {
+  0: { open:'12:00', close:'18:00' },   /* Sun 12–6  */
+  1: { open:'09:00', close:'18:00' },   /* Mon 9–6   */
+  2: { open:'09:00', close:'20:00' },   /* Tue 9–8   */
+  3: { open:'09:00', close:'20:00' },   /* Wed 9–8   */
+  4: { open:'09:00', close:'20:00' },   /* Thu 9–8   */
+  5: { open:'12:00', close:'18:00' },   /* Fri 12–6  */
+  6: { open:'10:00', close:'18:00' },   /* Sat 10–6  */
+};
+const PEOPLE = [
+  { id:'leah',  name:'Leah',  color:'#722F37' },
+  { id:'betty', name:'Betty', color:'#CC5500' },
+  { id:'both',  name:'Both',  color:'#6B5740' },
+];
+const SHIFT_TYPES = [
+  { id:'library', label:'Library shift', icon:'☕' },
+  { id:'pastry',  label:'Pastry pickup', icon:'🥐' },
+  { id:'prep',    label:'Food prep',     icon:'🔪' },
+  { id:'clean',   label:'Cleaning',      icon:'🧽' },
+  { id:'other',   label:'Other',         icon:'📌' },
+];
+const DAY_START = 7 * 60;    /* hours grid runs 7:00 …            */
+const DAY_END   = 22 * 60;   /* … to 22:00 (covers 8p closes)     */
+const HOUR_PX   = 42;
+const LIB_LOC   = 'San Francisco Main Library, 100 Larkin St, San Francisco, CA 94102';
 
 /* your palette */
 const PALETTE = [
@@ -664,6 +883,14 @@ let expandedSubs    = new Set();
 let renamingPid     = null;
 let showArchived    = false;
 let syncStarted     = false;
+
+/* schedule state */
+let shifts       = {};
+let shiftDraft   = null;   // shift modal working copy
+let calAnchor    = new Date();
+let calView      = store.get('cal-view');
+if (!['week','hours','month'].includes(calView)) calView = 'week';
+let calCollapsed = store.get('cal-collapsed') === '1';
 
 /* ──────── HELPERS ──────── */
 function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2); }
@@ -739,10 +966,18 @@ function startSync() {
     render();
     if (changed) save();
   }, err => console.error('RTDB read error:', err));
+  onValue(shiftsRef, snap => {
+    shifts = snap.val() || {};
+    renderCal();
+  }, err => console.error('RTDB shifts read error:', err));
 }
 async function save() {
   try { await set(stateRef, JSON.parse(JSON.stringify(db))); }
   catch (e) { console.error('RTDB write error:', e); }
+}
+async function saveShifts() {
+  try { await set(shiftsRef, JSON.parse(JSON.stringify(shifts))); }
+  catch (e) { console.error('RTDB shifts write error:', e); }
 }
 
 /* ──────── FOCUS PRESERVATION ──────── */
@@ -1466,6 +1701,371 @@ window.toggleSub = function (taskId, subId) { toggleSubInline(taskId, subId); };
 window.patchSub  = function (taskId, subId, value) { patchSubInline(taskId, subId, value); };
 window.deleteSub = function (taskId, subId) { deleteSubInline(taskId, subId); };
 
+/* ══════════════ SCHEDULE / SHIFT CALENDAR ══════════════ */
+
+/* date + time helpers */
+function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function fromYMD(s){ return new Date(s+'T00:00:00'); }
+function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function startOfWeek(d){ const x=new Date(d); x.setHours(0,0,0,0); x.setDate(x.getDate()-((x.getDay()+6)%7)); return x; }  /* Monday start */
+function sameDay(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
+function toMin(t){ if(!t) return 0; const p=String(t).split(':'); return (+p[0])*60+(+p[1]||0); }
+function fmtT(t){ const m=toMin(t); let h=Math.floor(m/60); const mm=m%60, ap=h>=12?'p':'a'; h=h%12||12; return h+(mm?':'+String(mm).padStart(2,'0'):'')+ap; }
+function fmtRangeT(a,b){ return fmtT(a)+'–'+fmtT(b); }
+function person(id){ return PEOPLE.find(p=>p.id===id)||PEOPLE[0]; }
+function stype(id){ return SHIFT_TYPES.find(t=>t.id===id)||SHIFT_TYPES[SHIFT_TYPES.length-1]; }
+function whoName(w){ return w==='both' ? PEOPLE[0].name+' + '+PEOPLE[1].name : person(w).name; }
+function hexA(hex,a){ const c=hex.replace('#',''); return 'rgba('+parseInt(c.slice(0,2),16)+','+parseInt(c.slice(2,4),16)+','+parseInt(c.slice(4,6),16)+','+a+')'; }
+function chipCss(w){
+  if (w==='both') return 'background:linear-gradient(135deg,'+hexA(PEOPLE[0].color,.13)+' 50%,'+hexA(PEOPLE[1].color,.13)+' 50%);border-left:3px solid '+PEOPLE[2].color+';';
+  const c=person(w).color;
+  return 'background:'+hexA(c,.11)+';border-left:3px solid '+c+';';
+}
+function libFor(d){ return LIB_HOURS[d.getDay()]||null; }
+function libLabel(d){ const L=libFor(d); return L?fmtRangeT(L.open,L.close):'closed'; }
+function shiftsOn(ds){
+  return Object.values(shifts).filter(s=>s&&s.date===ds)
+    .sort((a,b)=>toMin(a.start)-toMin(b.start)||toMin(a.end)-toMin(b.end));
+}
+
+/* nav + toolbar */
+function calLabel(){
+  if (calView==='month') return calAnchor.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const s=startOfWeek(calAnchor), e=addDays(s,6);
+  return s.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+e.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+window.toggleCal = function(){
+  calCollapsed=!calCollapsed;
+  store.set('cal-collapsed',calCollapsed?'1':'0');
+  renderCal();
+};
+window.setCalView = function(v){
+  calView=v; store.set('cal-view',v);
+  if (calCollapsed){ calCollapsed=false; store.set('cal-collapsed','0'); }
+  renderCal();
+};
+window.calShift = function(dir){
+  calAnchor = calView==='month'
+    ? new Date(calAnchor.getFullYear(), calAnchor.getMonth()+dir, 1)
+    : addDays(calAnchor, 7*dir);
+  renderCal();
+};
+window.calToday = function(){ calAnchor=new Date(); renderCal(); };
+
+function renderCal(){
+  const sec=document.getElementById('calsec'); if(!sec) return;
+  sec.classList.toggle('collapsed', calCollapsed);
+  const lbl=document.getElementById('cal-label'); if(lbl) lbl.textContent=calLabel();
+  document.querySelectorAll('.cal-viewbtn').forEach(b=>b.classList.toggle('on', b.dataset.v===calView));
+  const body=document.getElementById('cal-body'); if(!body) return;
+  if (calCollapsed){ body.innerHTML=''; return; }
+  if (calView==='hours')      body.innerHTML=calHoursHTML();
+  else if (calView==='month') body.innerHTML=calMonthHTML();
+  else                        body.innerHTML=calWeekHTML();
+  /* nudge horizontal scroll so today is in view */
+  if (calView==='week'){
+    const g=body.querySelector('.wk-grid'), t=g&&g.querySelector('.wk-day.today');
+    if (g&&t&&g.scrollWidth>g.clientWidth+8) g.scrollLeft=Math.max(0,t.offsetLeft-(g.clientWidth-t.offsetWidth)/2);
+  }
+  if (calView==='hours'){
+    const w=body.querySelector('.hr-wrap'), th=body.querySelector('.hr-dayhead.today');
+    if (w&&th&&w.scrollWidth>w.clientWidth+8) w.scrollLeft=Math.max(0,th.offsetLeft-70);
+  }
+}
+
+/* easy week */
+function calWeekHTML(){
+  const s=startOfWeek(calAnchor), today=new Date();
+  let cols='';
+  for (let i=0;i<7;i++){
+    const d=addDays(s,i), ds=ymd(d), isT=sameDay(d,today);
+    const chips=shiftsOn(ds).map(sh=>{
+      const ty=stype(sh.type);
+      return `<button class="wk-chip" style="${chipCss(sh.who)}"
+        onclick="openShiftModal('${sh.id}')"
+        title="${esc(ty.label)} — ${esc(whoName(sh.who))}${sh.note?' · '+esc(sh.note):''}">
+        <span class="wk-time">${fmtRangeT(sh.start,sh.end)}</span>
+        <span class="wk-who">${ty.icon} ${esc(whoName(sh.who))}</span>
+      </button>`;
+    }).join('');
+    cols+=`<div class="wk-day${isT?' today':''}">
+      <div class="wk-head">
+        <span class="wk-dow">${d.toLocaleDateString('en-US',{weekday:'short'})}</span>
+        <span class="wk-num${isT?' t':''}">${d.getDate()}</span>
+        <span class="wk-lib" title="SF Main Library hours">${libLabel(d)}</span>
+      </div>
+      <div class="wk-chips">${chips}</div>
+      <button class="wk-add" title="Add a shift on ${ds}" onclick="openShiftModal(null,'${ds}')">+</button>
+    </div>`;
+  }
+  return `<div class="wk-grid">${cols}</div>`;
+}
+
+/* full-hours week */
+function calHoursHTML(){
+  const s=startOfWeek(calAnchor), today=new Date();
+  const gridH=(DAY_END-DAY_START)/60*HOUR_PX;
+  let gut='';
+  for (let m=DAY_START;m<DAY_END;m+=60){
+    gut+=`<div class="hr-lbl" style="top:${(m-DAY_START)/60*HOUR_PX+2}px">${fmtT(String(Math.floor(m/60)).padStart(2,'0')+':00')}</div>`;
+  }
+  let heads='<div class="hr-corner"></div>', cols='';
+  for (let i=0;i<7;i++){
+    const d=addDays(s,i), ds=ymd(d), isT=sameDay(d,today);
+    heads+=`<div class="hr-dayhead${isT?' today':''}">
+      <span class="wk-dow">${d.toLocaleDateString('en-US',{weekday:'short'})}</span>
+      <span class="wk-num${isT?' t':''}">${d.getDate()}</span>
+      <span class="wk-lib">${libLabel(d)}</span>
+    </div>`;
+    const L=libFor(d);
+    const closed = L
+      ? `<div class="hr-closed" style="top:0;height:${(toMin(L.open)-DAY_START)/60*HOUR_PX}px"></div>
+         <div class="hr-closed" style="top:${(toMin(L.close)-DAY_START)/60*HOUR_PX}px;height:${(DAY_END-toMin(L.close))/60*HOUR_PX}px"></div>`
+      : `<div class="hr-closed" style="top:0;height:${gridH}px"></div>`;
+    const blocks=shiftsOn(ds).map(sh=>{
+      const top=Math.max(0,(toMin(sh.start)-DAY_START)/60*HOUR_PX);
+      const h=Math.max(16,(toMin(sh.end)-toMin(sh.start))/60*HOUR_PX-2);
+      const ty=stype(sh.type);
+      return `<button class="hr-shift" style="top:${top}px;height:${h}px;${chipCss(sh.who)}"
+        onclick="event.stopPropagation();openShiftModal('${sh.id}')"
+        title="${esc(ty.label)} — ${esc(whoName(sh.who))}${sh.note?' · '+esc(sh.note):''}">
+        <span class="hs-1">${ty.icon} ${esc(whoName(sh.who))}</span>
+        <span class="hs-2">${fmtRangeT(sh.start,sh.end)}</span>
+      </button>`;
+    }).join('');
+    let now='';
+    if (isT){
+      const nm=today.getHours()*60+today.getMinutes();
+      if (nm>=DAY_START&&nm<=DAY_END) now=`<div class="hr-now" style="top:${(nm-DAY_START)/60*HOUR_PX}px"></div>`;
+    }
+    cols+=`<div class="hr-col" onclick="hrColClick(event,'${ds}')" title="Click an empty hour to add a shift">${closed}${blocks}${now}</div>`;
+  }
+  return `<div class="hr-wrap"><div class="hr-min">
+    <div class="hr-scroll">
+      <div class="hr-heads">${heads}</div>
+      <div class="hr-grid" style="height:${gridH}px">
+        <div class="hr-gutter">${gut}</div>${cols}
+      </div>
+    </div>
+  </div></div>`;
+}
+window.hrColClick = function(e,ds){
+  if (e.target.closest('.hr-shift')) return;
+  const rect=e.currentTarget.getBoundingClientRect();
+  let m=DAY_START+Math.floor((e.clientY-rect.top)/HOUR_PX)*60;
+  m=Math.min(Math.max(m,DAY_START),DAY_END-60);
+  const hh=String(Math.floor(m/60)).padStart(2,'0')+':00';
+  const eh=String(Math.floor(m/60)+1).padStart(2,'0')+':00';
+  openShiftModal(null,ds,hh,eh);
+};
+
+/* month */
+function calMonthHTML(){
+  const y=calAnchor.getFullYear(), mo=calAnchor.getMonth();
+  const gridStart=startOfWeek(new Date(y,mo,1));
+  const last=new Date(y,mo+1,0);
+  const weeks=Math.ceil((Math.round((last-gridStart)/86400000)+1)/7);
+  const today=new Date();
+  const head=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(x=>`<div class="mo-dow">${x}</div>`).join('');
+  let cells='';
+  for (let i=0;i<weeks*7;i++){
+    const d=addDays(gridStart,i), ds=ymd(d);
+    const out=d.getMonth()!==mo, isT=sameDay(d,today);
+    const list=shiftsOn(ds);
+    const chips=list.slice(0,3).map(sh=>{
+      const ty=stype(sh.type);
+      return `<button class="mo-chip" style="${chipCss(sh.who)}"
+        onclick="event.stopPropagation();openShiftModal('${sh.id}')"
+        title="${fmtRangeT(sh.start,sh.end)} · ${esc(ty.label)} — ${esc(whoName(sh.who))}">
+        <span class="ico">${ty.icon}</span><span class="t">${fmtT(sh.start)} ${esc(whoName(sh.who))}</span>
+      </button>`;
+    }).join('');
+    const more=list.length>3?`<span class="mo-more">+${list.length-3}</span>`:'';
+    cells+=`<div class="mo-cell${out?' out':''}" onclick="openShiftModal(null,'${ds}')" title="Add a shift on ${ds}">
+      <span class="mo-num${isT?' t':''}">${d.getDate()}</span>${chips}${more}
+    </div>`;
+  }
+  return `<div class="mo-grid"><div class="mo-head">${head}</div><div class="mo-cells">${cells}</div></div>`;
+}
+
+/* ──────── SHIFT MODAL ──────── */
+window.openShiftModal = function (id, dateStr, start, end) {
+  if (id && shifts[id]) {
+    shiftDraft = { ...shifts[id] };
+  } else {
+    const ds = dateStr || ymd(new Date());
+    const L = libFor(fromYMD(ds));
+    shiftDraft = {
+      id:null, date:ds,
+      start: start || (L ? L.open  : '09:00'),
+      end:   end   || (L ? L.close : '17:00'),
+      who: store.get('lastWho') || 'leah',
+      type:'library', note:'', repeat:'0',
+    };
+  }
+  renderShiftModal();
+  document.getElementById('shift-backdrop').style.display = 'flex';
+};
+window.closeShiftModal = function () {
+  document.getElementById('shift-backdrop').style.display = 'none';
+  shiftDraft = null;
+};
+window.shiftBackdropClick = function (e) { if (e.target.id === 'shift-backdrop') closeShiftModal(); };
+
+function renderShiftModal(){
+  const d=shiftDraft; if(!d) return;
+  const editing=!!d.id;
+  const dotColor = d.who==='both' ? PEOPLE[2].color : person(d.who).color;
+  document.getElementById('shift-eyebrow').innerHTML =
+    `<div style="width:7px;height:7px;border-radius:50%;background:${dotColor}"></div>${editing?'Edit shift':'New shift'}`;
+
+  const whoBtns=PEOPLE.map(p=>
+    `<button class="pri-btn${d.who===p.id?' on':''}"
+       style="${d.who===p.id?`background:${p.color};border-color:${p.color};`:''}"
+       onclick="shiftSet('who','${p.id}')">
+       <span class="d" style="background:${d.who===p.id?'#fff':p.color}"></span>${p.name}</button>`
+  ).join('');
+
+  const typeBtns=SHIFT_TYPES.map(t=>
+    `<button class="lbl-btn${d.type===t.id?' on':''}" onclick="shiftSet('type','${t.id}')">${t.icon} ${t.label}</button>`
+  ).join('');
+
+  const L=libFor(fromYMD(d.date));
+  const reps=[['0','Just this day'],['1','This week + next'],['3','Weekly × 4'],['7','Weekly × 8'],['11','Weekly × 12']];
+
+  document.getElementById('shift-body').innerHTML =
+    `<div class="f-row">
+       <div>
+         <div class="f-label">Date</div>
+         <input class="f-input" type="date" value="${d.date}" onchange="shiftSet('date',this.value)">
+       </div>
+       <div>
+         <div class="f-label">Start / End</div>
+         <div style="display:flex;gap:6px">
+           <input class="f-input" type="time" value="${d.start}" onchange="shiftSet('start',this.value)">
+           <input class="f-input" type="time" value="${d.end}" onchange="shiftSet('end',this.value)">
+         </div>
+       </div>
+     </div>
+     <div>
+       <div class="f-label">Who</div>
+       <div class="pri-group">${whoBtns}</div>
+     </div>
+     <div>
+       <div class="f-label">Type</div>
+       <div class="label-group">${typeBtns}</div>
+     </div>
+     <div class="preset-row">
+       <button class="preset" onclick="presetLib()">☕ Library open–close${L?` (${fmtRangeT(L.open,L.close)})`:''}</button>
+       <button class="preset" onclick="presetPastry()">🥐 8am pastry run</button>
+     </div>
+     <div>
+       <div class="f-label">Note</div>
+       <input class="f-input" value="${esc(d.note||'')}" placeholder="e.g. bring the float · order # · door code"
+         oninput="shiftNote(this.value)">
+     </div>
+     ${editing?'':`<div>
+       <div class="f-label">Repeat</div>
+       <select class="f-input" onchange="shiftRepeat(this.value)">
+         ${reps.map(([v,l])=>`<option value="${v}"${String(d.repeat)===v?' selected':''}>${l}</option>`).join('')}
+       </select>
+     </div>`}
+     <div class="meta-text">Library that day: ${L?fmtRangeT(L.open,L.close):'closed'} — hours shaded on the grid. Holiday closures aren't tracked, so double-check big holidays.</div>`;
+
+  document.getElementById('shift-foot').innerHTML =
+    (editing
+      ? `<div class="foot-group">
+           <button class="btn btn-danger" onclick="deleteShift('${d.id}')">Delete</button>
+           <button class="btn btn-ghost" title="Copy this shift to the same day next week" onclick="dupNextWeek('${d.id}')">→ next wk</button>
+           <a class="btn btn-ghost" style="text-decoration:none;display:inline-flex;align-items:center"
+             target="_blank" rel="noopener" title="Add this shift to a Google Calendar" href="${gcalURL(d)}">GCal ↗</a>
+         </div>`
+      : `<span class="meta-text">Shows for everyone on the board</span>`)
+    + `<button class="btn btn-primary" onclick="saveShift()">${editing?'Save':'Add shift'}</button>`;
+}
+
+window.shiftSet    = function(f,v){ if(!shiftDraft) return; shiftDraft[f]=v; renderShiftModal(); };
+window.shiftNote   = function(v){ if(shiftDraft) shiftDraft.note=v; };
+window.shiftRepeat = function(v){ if(shiftDraft) shiftDraft.repeat=v; };
+window.presetLib = function(){
+  if(!shiftDraft) return;
+  const L=libFor(fromYMD(shiftDraft.date));
+  shiftDraft.type='library';
+  if (L){ shiftDraft.start=L.open; shiftDraft.end=L.close; }
+  renderShiftModal();
+};
+window.presetPastry = function(){
+  if(!shiftDraft) return;
+  shiftDraft.type='pastry'; shiftDraft.start='08:00'; shiftDraft.end='08:30';
+  renderShiftModal();
+};
+
+window.saveShift = function(){
+  const d=shiftDraft; if(!d) return;
+  if(!d.date){ alert('Pick a date first.'); return; }
+  if(toMin(d.end)<=toMin(d.start)){ alert('End time needs to be after start time.'); return; }
+  store.set('lastWho', d.who);
+  const reps = d.id ? 0 : (parseInt(d.repeat||'0',10)||0);
+  const base={...d}; delete base.repeat;
+  if(!base.id) base.id=uid();
+  base.createdAt = base.createdAt || new Date().toISOString();
+  shifts[base.id]=base;
+  for(let k=1;k<=reps;k++){
+    const c={...base, id:uid(), date:ymd(addDays(fromYMD(base.date),7*k))};
+    shifts[c.id]=c;
+  }
+  saveShifts(); closeShiftModal(); renderCal();
+};
+window.deleteShift = function(id){
+  if(!confirm('Delete this shift?')) return;
+  delete shifts[id];
+  saveShifts(); closeShiftModal(); renderCal();
+};
+window.dupNextWeek = function(id){
+  const s=shifts[id]; if(!s) return;
+  const c={...s, id:uid(), date:ymd(addDays(fromYMD(s.date),7))};
+  shifts[c.id]=c;
+  saveShifts(); closeShiftModal(); renderCal();
+};
+
+/* google calendar hand-offs */
+function gcalURL(s){
+  const ds=s.date.replace(/-/g,'');
+  const ty=stype(s.type);
+  const p=new URLSearchParams({
+    action:'TEMPLATE',
+    text:`${ty.icon} ${ty.label} — ${whoName(s.who)}`,
+    dates:`${ds}T${s.start.replace(':','')}00/${ds}T${s.end.replace(':','')}00`,
+    details:(s.note?s.note+'\n':'')+'From the Gratified ops board',
+    location:s.type==='library'?LIB_LOC:'',
+  });
+  return 'https://calendar.google.com/calendar/render?'+p.toString();
+}
+function escICS(s){ return String(s).replace(/\\/g,'\\\\').replace(/([,;])/g,'\\$1').replace(/\n/g,'\\n'); }
+window.exportICS = function(){
+  const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+Z$/,'Z');
+  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Gratified//ops//EN'];
+  Object.values(shifts).forEach(s=>{
+    if(!s||!s.date) return;
+    const ds=s.date.replace(/-/g,''), ty=stype(s.type);
+    lines.push('BEGIN:VEVENT',
+      'UID:'+s.id+'@gratified',
+      'DTSTAMP:'+stamp,
+      'DTSTART:'+ds+'T'+s.start.replace(':','')+'00',
+      'DTEND:'+ds+'T'+s.end.replace(':','')+'00',
+      'SUMMARY:'+escICS(ty.icon+' '+ty.label+' — '+whoName(s.who)));
+    if (s.note) lines.push('DESCRIPTION:'+escICS(s.note));
+    if (s.type==='library') lines.push('LOCATION:'+escICS(LIB_LOC));
+    lines.push('END:VEVENT');
+  });
+  lines.push('END:VCALENDAR');
+  const blob=new Blob([lines.join('\r\n')],{type:'text/calendar'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='gratified-shifts.ics';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+};
+
 /* ──────── GATE (cover password) ──────── */
 function gateVisible() { return document.getElementById('gate').style.display !== 'none'; }
 function revealApp() {
@@ -1502,12 +2102,14 @@ document.addEventListener('keydown', e => {
                document.querySelector('.quick-add');
     el?.focus();
   }
-  if (e.key === 'Escape') { closeModal(); closeProjSettings(); }
+  if (e.key === 's') { e.preventDefault(); openShiftModal(null); }
+  if (e.key === 'Escape') { closeModal(); closeProjSettings(); closeShiftModal(); }
 });
 
 /* ──────── INIT ──────── */
 populateLabelSel();
 attachProjbarDnD();
+renderCal();
 checkGate();
 </script>
 </body>
