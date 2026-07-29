@@ -38,6 +38,33 @@
   a { color: #222; }
   hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
   .note { font-size: 14px; color: #555; }
+
+  .checklist { list-style: none; padding-left: 0; }
+  .checklist li { padding: 6px 0; display: flex; align-items: flex-start; gap: 8px; }
+  .checklist .mark { flex-shrink: 0; width: 14px; height: 14px; margin-top: 5px; }
+
+  .mark-check polyline {
+    fill: none; stroke: #555; stroke-width: 2.2;
+    stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 18; stroke-dashoffset: 18;
+  }
+  .check-1 polyline { animation: drawCheck 0.35s ease 0.5s forwards; }
+  .check-2 polyline { animation: drawCheck 0.35s ease 1.0s forwards; }
+  @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+  .mark-spinner { animation: spin 1s linear infinite; }
+  .mark-spinner circle {
+    fill: none; stroke: #999; stroke-width: 2;
+    stroke-linecap: round; stroke-dasharray: 32; stroke-dashoffset: 8;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .mark-empty {
+    width: 10px; height: 10px;
+    border: 1.5px solid #bbb; border-radius: 50%;
+    margin-top: 6px;
+  }
+  .future { opacity: 0.4; }
 </style>
 </head>
 <body>
@@ -62,21 +89,36 @@
 
 <h2 id="plan">Plan</h2>
 
-<ol>
-  <li><strong>Embed in the hottest tech centers</strong> (for the vibes)<br>
-  Edge Esmeralda, Founders Inc, Frontier Tower, Mox SF, Lighthaven<br>
-  (conferences, weekly popups, 2 month-long services, dinners, a wedding)</li>
+<ul class="checklist">
+  <li>
+    <span class="mark"><svg class="mark-check check-1" viewBox="0 0 14 14" width="14" height="14"><polyline points="2.5 7.5 5.5 10.5 11.5 3.5"/></svg></span>
+    <span><strong>Embed in the hottest tech centers</strong> (for the vibes)<br>
+    Edge Esmeralda, Founders Inc, Frontier Tower, Mox SF, Lighthaven<br>
+    (conferences, weekly popups, 2 month-long services, dinners, a wedding)</span>
+  </li>
 
-  <li><strong>Set up pilot locations inside libraries</strong> (for the rapport)<br>
-  Opening inside SF Main Library next week</li>
+  <li>
+    <span class="mark"><svg class="mark-check check-2" viewBox="0 0 14 14" width="14" height="14"><polyline points="2.5 7.5 5.5 10.5 11.5 3.5"/></svg></span>
+    <span><strong>Set up pilot locations inside libraries</strong> (for the rapport)<br>
+    Opening inside SF Main Library next week</span>
+  </li>
 
-  <li><strong>Partner with airlines to serve complimentary terminal coffee</strong> (for the demand)<br>
-  Seeking to collaborate with Peet's and Southwest Airlines inside Oakland Airport to create an in-terminal lounge experience</li>
+  <li>
+    <span class="mark"><svg class="mark-spinner" viewBox="0 0 14 14" width="14" height="14"><circle cx="7" cy="7" r="5"/></svg></span>
+    <span><strong>Partner with airlines to serve complimentary terminal coffee</strong> (for the demand)<br>
+    Seeking to collaborate with Peet's and Southwest Airlines inside Oakland Airport to create an in-terminal lounge experience</span>
+  </li>
 
-  <li><strong>Reroute beans through Morocco instead of Switzerland</strong> (for the supply)</li>
+  <li class="future">
+    <span class="mark mark-empty"></span>
+    <span><strong>Reroute beans through Morocco instead of Switzerland</strong> (for the supply)</span>
+  </li>
 
-  <li><strong>Acquire Starbucks</strong> (because we could make it better)</li>
-</ol>
+  <li class="future">
+    <span class="mark mark-empty"></span>
+    <span><strong>Acquire Starbucks</strong> (because we could make it better)</span>
+  </li>
+</ul>
 
 <hr>
 
@@ -129,11 +171,11 @@
 
 <p><strong>Morocco?</strong></p>
 <ul>
-  <li><strong>Neutral space</strong> — could be a new budget Switzerland (home of World Economic Forum and #1 exporter of coffee by $ amount), for conferences where people without US-visas want to attend, inside sphere of influence/safety of EU</li>
+  <li><strong>Neutral space</strong> — could be a new budget Switzerland (current home of World Economic Forum and #1 exporter of coffee by $ amount), for conferences where people without US-visas want to attend, inside sphere of influence/safety of EU</li>
   <li><strong>Good trade positioning</strong> — Free Trade Agreement with USA, MFN with China, strong+active relations with EU. Inter-Africa FTA ratified 5 years ago. Flight prices equivalent to Europe.</li>
 </ul>
 
-<p>In The Art of War Sun Tze suggests aligning oneself with the neutral space between three great powers.</p>
+<p>In <i>The Art of War</i> Sun Tze suggests aligning oneself with the neutral space between three great powers.</p>
 
 <p><strong>Side quests:</strong></p>
 
@@ -142,8 +184,10 @@
   <li><strong>Spaces:</strong> 1.3B raiser interested in building Corgi Cafe alternative in SF (in talks) · Buy-out offer from cafe across the street from Lighthaven · Soft interest in Oak location</li>
   <li><strong>Philosophy:</strong> Nourish/Collab/Create · Permaculture / Ready Player One / Bernard Maybeck aesthetic · Some iteration of Costco efficiency/memberships, bay area co-op humanity, startup fire</li>
   <li><strong>Materials:</strong> Book/youtube series — how to start Gratified (planned)</li>
-  <li><strong>Good AI usage:</strong> This saves SO MUCH TIME AND MONEY. Example: Turbochef oven setup for a new recipe traditionally takes ~15 tries. Claude can 1-3-shot setups. Not outsourcing values/direction/all aesthetics.</li>
 </ul>
+  
+Good AI usage: This saves SO MUCH TIME AND MONEY. Example: Turbochef oven setup for a new recipe traditionally takes ~15 tries. Claude can 1-3-shot setups. Not outsourcing values/direction/all aesthetics.
+
 
 <hr>
 
