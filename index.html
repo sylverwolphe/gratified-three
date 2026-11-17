@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Gratified: coffee + art on the lower level of the SF Main Library, 100 Larkin St.">
+    <meta name="description" content="Gratified, coffee + art. Lower Level, SF Main Library, 100 Larkin St, San Francisco.">
     <title>Gratified  |  coffee + art</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M16 1 31 16 16 31 1 16z' fill='%23722F37'/><path d='M16 8.5 23.5 16 16 23.5 8.5 16z' fill='%23E8A317'/></svg>">
     <link rel="preconnect" href="https://api.fontshare.com">
@@ -686,7 +686,7 @@
             position: relative;
             border: 3px solid var(--deep-red);
             min-height: 460px;
-            background: var(--golden-sand);
+            background: #EAE2D4;
         }
         .map-frame::before {
             content: '';
@@ -703,23 +703,50 @@
             color: var(--deep-red); font-weight: 700; letter-spacing: 1px;
         }
 
-        /* map pins */
+        /* map pins: HTML drawn on top of the map */
+        .pin-wrap {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            display: flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px;
+            padding: 0; border: 0; background: none;
+            cursor: pointer;
+        }
+        .pin-wrap.home { width: 48px; height: 48px; z-index: 2; }
         .pin {
-            width: 20px; height: 20px;
+            width: 16px; height: 16px;
             transform: rotate(45deg);
             background: var(--pin, var(--deep-red));
-            border: 3px solid var(--cream);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
-            cursor: pointer;
+            border: 2px solid var(--cream);
+            box-shadow: 0 1px 4px rgba(60, 40, 30, 0.3);
             transition: transform 0.2s ease;
         }
-        .pin:hover, .pin.is-open { transform: rotate(45deg) scale(1.25); }
-        .pin.home {
-            width: 34px; height: 34px;
+        .pin-wrap:hover .pin, .pin-wrap:focus-visible .pin, .pin-wrap.is-open .pin { transform: rotate(45deg) scale(1.3); }
+        .pin-wrap.home .pin {
+            width: 28px; height: 28px;
             background: var(--gold);
-            border: 7px solid var(--deep-red);
-            outline: 2px solid var(--cream);
+            border: 6px solid var(--deep-red);
+            box-shadow: 0 0 0 2px var(--cream), 0 2px 6px rgba(60, 40, 30, 0.3);
         }
+        #partnerMap .gm-style-iw-c { border-radius: 0 !important; }
+
+        .map-floating {
+            position: absolute;
+            left: 18px; top: 18px;
+            z-index: 3;
+            max-width: calc(100% - 36px);
+            padding: 8px 14px 9px;
+            background: rgba(237, 232, 224, 0.94);
+            border: 2px solid var(--deep-red);
+            color: var(--deep-red);
+            pointer-events: none;
+        }
+        .map-frame.is-fallback .map-floating { top: auto; bottom: 34px; }
+        .map-floating h3 { font-family: var(--sans); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px; color: var(--olive-bronze); margin-bottom: 3px; }
+        .map-floating ul { list-style: none; }
+        .map-floating li { display: flex; align-items: center; gap: 9px; font-family: var(--serif); font-size: 0.98rem; line-height: 1.55; }
+        .map-floating a { pointer-events: auto; color: inherit; }
+        .mf-gem { width: 8px; height: 8px; flex: none; transform: rotate(45deg); border: 1.5px solid var(--sage); }
 
         .map-info { font-family: var(--sans); color: var(--charcoal); max-width: 240px; line-height: 1.45; }
         .map-info strong { display: block; font-family: var(--serif); font-size: 1.1rem; color: var(--deep-red); margin-bottom: 2px; }
@@ -781,17 +808,72 @@
 
         /* ===== PEOPLE ===== */
         .people-intro {
-            text-align: center;
-            max-width: 620px;
-            margin: calc(-1 * clamp(10px, 3vw, 30px)) auto clamp(28px, 5vw, 48px);
-            color: var(--olive-bronze);
+            margin: 0 0 clamp(24px, 4vw, 36px);
+            color: var(--charcoal);
+            opacity: 0.85;
             font-size: clamp(15px, 2.2vw, 17px);
-            line-height: 1.75;
+            line-height: 1.8;
+        }
+
+        .people-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: clamp(28px, 4vw, 52px);
+            margin-top: calc(-1 * clamp(8px, 2vw, 20px));
+        }
+        .people-text { flex: 1 1 360px; max-width: 540px; }
+
+        /* phones: story, then picture, then names, so tapping a name shows its photo right above */
+        @media (max-width: 760px) {
+            .people-row { flex-direction: column; align-items: stretch; gap: 0; }
+            .people-text { display: contents; }
+            .people-intro { order: 1; }
+            .portrait-frame { order: 2; align-self: center; margin-bottom: 24px; }
+            .crew-board { order: 3; }
+        }
+
+        .portrait-frame {
+            position: relative;
+            flex: none;
+            width: min(100%, 340px);
+            aspect-ratio: 1 / 1;
+            margin: 0;
+            border: 3px solid var(--deep-red);
+            overflow: hidden;
+            background: var(--golden-sand);
+        }
+        .portrait-frame::before {
+            content: '';
+            position: absolute; inset: 8px;
+            border: 1px solid var(--cream);
+            opacity: 0.55;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .portrait-frame img {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.12s ease;
+        }
+        .portrait-frame img.active { opacity: 1; }
+        .portrait-frame figcaption {
+            position: absolute; left: 0; right: 0; bottom: 0;
+            z-index: 6;
+            padding: 1.6rem 1rem 0.9rem;
+            background: linear-gradient(to top, rgba(114, 47, 55, 0.85), transparent);
+            color: var(--cream);
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: lowercase;
         }
 
         .crew-board {
-            max-width: 560px;
-            margin: 0 auto;
+            margin: 0;
             padding: clamp(36px, 5vw, 56px) clamp(32px, 5vw, 60px);
         }
         .crew-list { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; }
@@ -802,6 +884,8 @@
             line-height: 1.15;
             color: var(--deep-red);
         }
+        button.crew-name { background: none; border: 0; padding: 0; text-align: left; cursor: pointer; transition: color 0.2s ease; }
+        button.crew-name:hover, button.crew-name:focus-visible { color: var(--bright-orange); }
         .crew-role { font-weight: 700; font-size: 1.05rem; color: var(--bright-orange); white-space: nowrap; }
         .crew-list .mi-dots { top: -0.3em; font-size: 1.1rem; }
         #people .container { padding-bottom: clamp(70px, 10vw, 130px); }
@@ -821,6 +905,7 @@
             .mi-list.two-col { grid-template-columns: 1fr 1fr; column-gap: 1rem; }
             .discord-band .btn { width: 100%; }
             .map-legend { left: 12px; right: 12px; bottom: 12px; }
+            .map-floating { left: 12px; top: 12px; }
         }
 
         /* ===== FADE-IN ===== */
@@ -1087,9 +1172,16 @@
                 <div class="header">
                     <h2 class="logo" id="people-heading">People</h2>
                 </div>
-                <p class="people-intro fade-in">In December 2024 a shaman lady told Azmyth she would start a cafe called Gratified that would serve coffee and do art therapy. The prophecy captured Leah's imagination and got her dreaming about renovating Starbucks for the next quarter century: Making a cafe franchise focused on collaboration instead of competition, healthy drinks instead of sugary rushes, and every location developed to be a unique fit for its community instead of always being the same. In April 2025 we bought the domain, investors pitched in, and a roadmap was put together.</p>
-                <div class="section crew-board fade-in">
-                    <ul class="crew-list" id="crewList"></ul>
+                <div class="people-row">
+                    <figure class="portrait-frame fade-in" id="portraitFrame" hidden>
+                        <figcaption id="portraitCaption"></figcaption>
+                    </figure>
+                    <div class="people-text">
+                        <p class="people-intro fade-in">In December 2024 a shaman lady told Azmyth she would start a cafe called Gratified that would serve coffee and do art therapy. The prophecy captured Leah's imagination and got her dreaming about renovating Starbucks for the next quarter century: Making a cafe franchise focused on collaboration instead of competition, healthy drinks instead of sugary rushes, and every location developed to be a unique fit for its community instead of always being the same. In April 2025 we bought the domain, investors pitched in, and a roadmap was put together.</p>
+                        <div class="section crew-board fade-in">
+                            <ul class="crew-list" id="crewList"></ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1109,9 +1201,6 @@
         //  - Left empty: a plain keyless map of the library.
         // Restrict the key to your website in Google Cloud.
         googleMapsApiKey: 'AIzaSyCw_FMJ4wPMNUuPn3tsloj1PRWHdGPQhxI',
-        // Map ID (needed for the custom diamond pins). 'DEMO_MAP_ID' works;
-        // make your own later in Google Cloud if you want to restyle the map.
-        googleMapId: 'DEMO_MAP_ID',
 
         substackUrl: 'https://gratifiedwegrow.substack.com',
         partifulUrl: 'https://partiful.com/u/FYZcDQXvTPeptryuZgJ7',
@@ -1194,9 +1283,35 @@
 
     const PIN_COLORS = { food: '#722F37', friend: '#4E7A51' };
 
+    // Map colours (Google Maps JSON styling): cream land, sand water,
+    // sage parks, no shops, transit or street names.
+    const MAP_LAND = '#EAE2D4';
+    const MAP_STYLE = [
+        { elementType: 'geometry', stylers: [{ color: MAP_LAND }] },
+        { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+        { elementType: 'labels.text.fill', stylers: [{ color: '#8A7457' }] },
+        { elementType: 'labels.text.stroke', stylers: [{ color: MAP_LAND }, { weight: 4 }] },
+        { featureType: 'administrative', elementType: 'geometry', stylers: [{ visibility: 'off' }] },
+        { featureType: 'administrative.land_parcel', stylers: [{ visibility: 'off' }] },
+        { featureType: 'administrative.locality', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+        { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+        { featureType: 'poi.park', elementType: 'geometry', stylers: [{ visibility: 'on' }, { color: '#DCD8BD' }] },
+        { featureType: 'landscape.man_made', elementType: 'geometry', stylers: [{ color: MAP_LAND }] },
+        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#F6F0E6' }] },
+        { featureType: 'road', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+        { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#EBD5B3' }] },
+        { featureType: 'road.local', elementType: 'geometry', stylers: [{ color: '#F1EADF' }] },
+        { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#DBC197' }] },
+        { featureType: 'water', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+    ];
+
+    // People. The drawing shows by default; hovering (or tapping) a name
+    // with a photo swaps it in. Image files sit next to index.html.
+    const PORTRAIT = { image: 'azmyth-leah-drawings.jpeg', caption: 'azmyth and leah', alt: 'Drawing of Azmyth and Leah' };
     const PEOPLE = [
-        { name: 'Azmyth',  role: 'co-founder' },
-        { name: 'Leah',    role: 'co-founder' },
+        { name: 'Azmyth',  role: 'co-founder', photo: 'azmyth.jpeg' },
+        { name: 'Leah',    role: 'co-founder', photo: 'leah.jpg' },
         { name: 'Betty',   role: 'co-founder' },
         { name: 'Heather', role: 'first hire' },
     ];
@@ -1440,15 +1555,27 @@
     const isPinned = p => typeof p.lat === 'number' && typeof p.lng === 'number';
     const pinColor = p => PIN_COLORS[p.kind] || PIN_COLORS.food;
 
+    // Floating partners (no address) sit in a card on the map.
+    function renderFloating() {
+        const floating = PARTNERS.filter(p => !isPinned(p));
+        if (!floating.length) return;
+        document.getElementById('mapFrame').append(el('div', { class: 'map-floating' },
+            el('h3', {}, 'floating partners'),
+            el('ul', {}, floating.map(p => el('li', {},
+                el('span', { class: 'mf-gem', 'aria-hidden': 'true' }),
+                p.url ? el('a', { href: p.url, target: '_blank', rel: 'noopener' }, p.name) : p.name)))));
+    }
+
     // Plain map of the library, used when there's no key or the full map can't load.
     function renderMapFallback() {
-        const frame = document.getElementById('mapFrame');
         const key = CONFIG.googleMapsApiKey;
         const q = encodeURIComponent(`Gratified, ${HOME.address}`);
         const src = key
             ? `https://www.google.com/maps/embed/v1/place?key=${encodeURIComponent(key)}&q=${q}&zoom=15`
             : `https://maps.google.com/maps?q=${q}&z=15&output=embed`;
-        frame.replaceChildren(el('iframe', {
+        document.getElementById('mapFrame').classList.add('is-fallback');
+        document.querySelector('#mapFrame .map-legend')?.remove();
+        document.getElementById('partnerMap').replaceChildren(el('iframe', {
             title: 'Map: Gratified at the SF Main Library',
             src, loading: 'lazy', referrerpolicy: 'no-referrer-when-downgrade', allowfullscreen: true,
         }));
@@ -1463,28 +1590,38 @@
         };
         const s = document.createElement('script');
         s.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(CONFIG.googleMapsApiKey)
-              + '&v=weekly&loading=async&libraries=marker&callback=__gratifiedInitMap';
+              + '&v=weekly&loading=async&callback=__gratifiedInitMap';
         s.async = true;
         s.onerror = renderMapFallback;
         document.head.append(s);
     }
 
     async function buildMap() {
-        const { Map, InfoWindow } = await google.maps.importLibrary('maps');
-        const { AdvancedMarkerElement } = await google.maps.importLibrary('marker');
+        const { Map, InfoWindow, OverlayView } = await google.maps.importLibrary('maps');
         const node = document.getElementById('partnerMap');
         node.replaceChildren();
 
         const map = new Map(node, {
-            mapId: CONFIG.googleMapId,
             center: { lat: HOME.lat, lng: HOME.lng },
             zoom: 13,
+            styles: MAP_STYLE,
+            backgroundColor: MAP_LAND,
             disableDefaultUI: true,
             zoomControl: true,
-            fullscreenControl: true,
             gestureHandling: 'cooperative',
             clickableIcons: false,
         });
+
+        // Places an HTML element at a lat/lng and keeps it there as the map moves.
+        class Pin extends OverlayView {
+            constructor(position, element) { super(); this.position = position; this.element = element; }
+            onAdd() { this.getPanes().overlayMouseTarget.append(this.element); }
+            draw() {
+                const pt = this.getProjection().fromLatLngToDivPixel(this.position);
+                if (pt) { this.element.style.left = `${pt.x}px`; this.element.style.top = `${pt.y}px`; }
+            }
+            onRemove() { this.element.remove(); }
+        }
 
         const info = new InfoWindow();
         const bounds = new google.maps.LatLngBounds();
@@ -1497,25 +1634,30 @@
             el('a', { href: mapsDirectionsUrl(p), target: '_blank', rel: 'noopener' }, 'Directions →'));
 
         const place = (p, isHome) => {
-            const pin = el('div', { class: 'pin' + (isHome ? ' home' : ''), style: isHome ? '' : `--pin:${pinColor(p)}` });
-            const marker = new AdvancedMarkerElement({
-                map, position: { lat: p.lat, lng: p.lng }, title: p.name, content: pin, zIndex: isHome ? 10 : 1,
-            });
-            const open = () => {
+            const position = new google.maps.LatLng(p.lat, p.lng);
+            const button = el('button', {
+                type: 'button', class: 'pin-wrap' + (isHome ? ' home' : ''),
+                'aria-label': p.name, title: p.name,
+                style: isHome ? '' : `--pin:${pinColor(p)}`,
+            }, el('span', { class: 'pin', 'aria-hidden': 'true' }));
+            OverlayView.preventMapHitsAndGesturesFrom?.(button);
+            button.addEventListener('click', () => {
+                info.setOptions({ position, pixelOffset: new google.maps.Size(0, isHome ? -22 : -12) });
                 info.setContent(card(p));
-                info.open({ map, anchor: marker });
+                info.open({ map });
                 openPin?.classList.remove('is-open');
-                pin.classList.add('is-open');
-                openPin = pin;
-            };
-            marker.addListener('click', open);
-            bounds.extend({ lat: p.lat, lng: p.lng });
+                button.classList.add('is-open');
+                openPin = button;
+            });
+            new Pin(position, button).setMap(map);
+            bounds.extend(position);
         };
 
         place(HOME, true);
         PARTNERS.filter(isPinned).forEach(p => place(p, false));
         info.addListener('closeclick', () => openPin?.classList.remove('is-open'));
-        map.fitBounds(bounds, 48);
+        // keep pins clear of the floating card (top) and the key (bottom)
+        map.fitBounds(bounds, { top: 140, right: 56, bottom: 70, left: 56 });
 
         document.getElementById('mapFrame').append(el('div', { class: 'map-legend', 'aria-hidden': 'true' },
             el('span', {}, el('i', { class: 'home' }), 'SF Main Library'),
@@ -1525,11 +1667,74 @@
 
     // ---------- people ----------
     function renderPeople() {
-        document.getElementById('crewList').replaceChildren(...PEOPLE.map(p =>
-            el('li', {}, el('div', { class: 'mi-row' },
-                el('span', { class: 'crew-name' }, p.name),
+        const frame = document.getElementById('portraitFrame');
+        const caption = document.getElementById('portraitCaption');
+        const canHover = window.matchMedia('(hover: hover)').matches;
+        const shots = [];          // { key, img, caption }
+        let showing = 'base';
+
+        const addShot = (key, src, alt, text) => {
+            const img = el('img', { src, alt, decoding: 'async' });
+            frame.insertBefore(img, caption);
+            const shot = { key, img, caption: text };
+            shots.push(shot);
+            return shot;
+        };
+        const show = key => {
+            const shot = shots.find(x => x.key === key) || shots[0];
+            showing = shot.key;
+            shots.forEach(x => x.img.classList.toggle('active', x === shot));
+            caption.textContent = shot.caption;
+        };
+
+        // the drawing: if it's missing, hide the frame
+        const base = addShot('base', PORTRAIT.image, PORTRAIT.alt, PORTRAIT.caption);
+        const reveal = () => { frame.hidden = false; };
+        base.img.addEventListener('load', reveal, { once: true });
+        base.img.addEventListener('error', () => { frame.hidden = true; });
+        if (base.img.complete && base.img.naturalWidth) reveal();
+
+        document.getElementById('crewList').replaceChildren(...PEOPLE.map((p, i) => {
+            let name = el('span', { class: 'crew-name' }, p.name);
+            if (p.photo) {
+                const key = `p${i}`;
+                const shot = addShot(key, p.photo, `Photo of ${p.name}`, p.name.toLowerCase());
+                name = el('button', {
+                    type: 'button', class: 'crew-name',
+                    onmouseenter: () => canHover && show(key),
+                    onmouseleave: () => canHover && show('base'),
+                    // keyboard focus on desktop; on touch screens a tap toggles instead
+                    onfocus: () => canHover && show(key),
+                    onblur: () => canHover && show('base'),
+                    onclick: () => { if (!canHover) show(showing === key ? 'base' : key); },
+                }, p.name);
+                // photo missing: drop it and keep the name as plain text
+                shot.img.addEventListener('error', () => {
+                    shots.splice(shots.indexOf(shot), 1);
+                    shot.img.remove();
+                    name.replaceWith(el('span', { class: 'crew-name' }, p.name));
+                });
+            }
+            return el('li', {}, el('div', { class: 'mi-row' },
+                name,
                 el('span', { class: 'mi-dots', 'aria-hidden': 'true' }),
-                el('span', { class: 'crew-role' }, p.role)))));
+                el('span', { class: 'crew-role' }, p.role)));
+        }));
+
+        // hovering the frame steps through the photos, then back to the drawing
+        let timer = null;
+        frame.addEventListener('mouseenter', () => {
+            const seq = shots.filter(x => x.key !== 'base').map(x => x.key).concat('base');
+            let step = 0;
+            clearInterval(timer);
+            timer = setInterval(() => {
+                if (step < seq.length) show(seq[step++]);
+                else { clearInterval(timer); timer = null; }
+            }, 640);
+        });
+        frame.addEventListener('mouseleave', () => { clearInterval(timer); timer = null; show('base'); });
+
+        show('base');
     }
 
     // ---------- nav active state ----------
@@ -1581,6 +1786,7 @@
     renderEvents();
     renderHours();
     renderPeople();
+    renderFloating();
     observeFadeIns();
     updateActiveNav();
     setInterval(renderHours, 60 * 1000);
