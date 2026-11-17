@@ -27,7 +27,7 @@
             --charcoal: #3C3C3C;
             --golden-sand: #E6C89C;
             --gold: #E8A317;          /* logo diamond fill */
-            --sage: #4E7A51;          /* "friends" map pins */
+            --sage: #4E7A51;          /* "other partners" map pins */
             --leader: #C8936D;        /* menu dot leaders */
 
             --theme-accent: var(--deep-red);
@@ -351,23 +351,31 @@
             animation: fadeInUp 1s ease 0.5s both;
         }
 
+        /* The ring is drawn as a stroke, then a solid diamond takes over so the
+           point where the stroke starts and ends leaves no gap. */
         .diamond-ring {
-            stroke-dasharray: 230;
-            stroke-dashoffset: 230;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
             animation: drawDiamond 1.4s ease 0.7s forwards;
+        }
+
+        .diamond-solid {
+            opacity: 0;
+            animation: showSolid 0.01s linear 2.1s forwards;
         }
 
         .diamond-core {
             transform-box: fill-box;
             transform-origin: center;
             opacity: 0;
-            animation: fillDiamond 0.7s cubic-bezier(0.3, 1.4, 0.5, 1) 1.8s forwards;
+            animation: fillDiamond 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 2s forwards;
         }
 
         @keyframes drawDiamond { to { stroke-dashoffset: 0; } }
+        @keyframes showSolid { to { opacity: 1; } }
         @keyframes fillDiamond {
-            from { opacity: 0; transform: rotate(45deg) scale(0.3); }
-            to { opacity: 1; transform: rotate(45deg) scale(1); }
+            from { opacity: 0; transform: scale(0.3); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         @keyframes fadeInUp {
@@ -564,12 +572,6 @@
             transform: rotate(45deg);
         }
 
-        .menu-foot {
-            text-align: center;
-            margin-top: clamp(20px, 3vw, 30px);
-            font-size: 0.88rem;
-            color: var(--olive-bronze);
-        }
 
         /* ===== CONNECT ===== */
         .connect-grid {
@@ -734,9 +736,8 @@
         .find-us::before { border-color: rgba(237, 232, 224, 0.22); opacity: 1; }
         .find-us .card-title { color: var(--cream); display: flex; align-items: center; gap: 0.6rem; }
         .find-us .card-title .home-gem {
-            width: 18px; height: 18px; flex: none;
+            width: 16px; height: 16px; flex: none;
             background: var(--gold);
-            border: 4px solid var(--cream);
             transform: rotate(45deg);
         }
         .find-us address { font-style: normal; margin: 0.8rem 0 1rem; line-height: 1.55; }
@@ -778,47 +779,6 @@
         .map-legend i { width: 9px; height: 9px; transform: rotate(45deg); background: var(--pin); display: inline-block; }
         .map-legend i.home { width: 11px; height: 11px; background: var(--gold); border: 2px solid var(--deep-red); }
 
-        .partner-groups {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: clamp(20px, 3vw, 36px);
-            margin-top: clamp(20px, 3vw, 36px);
-            align-items: start;
-        }
-        .partner-groups .section { margin-bottom: 0; }
-
-        .group-head { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1.1rem; }
-        .group-head .swatch { width: 14px; height: 14px; }
-
-        .swatch { display: inline-block; flex: none; width: 12px; height: 12px; transform: rotate(45deg); background: var(--pin, var(--deep-red)); }
-        .swatch.floating { background: transparent; border: 2px dashed var(--pin, var(--deep-red)); }
-
-        .partner-list { list-style: none; }
-
-        .prow {
-            display: grid;
-            grid-template-columns: 14px 1fr auto;
-            gap: 0.25rem 0.9rem;
-            align-items: baseline;
-            padding: 0.8rem 0;
-            border-bottom: 1px solid rgba(114, 47, 55, 0.13);
-        }
-        .prow:last-child { border-bottom: 0; padding-bottom: 0.2rem; }
-        .prow .swatch { position: relative; top: -1px; }
-
-        .prow-name {
-            font-family: var(--serif);
-            font-size: 1.18rem;
-            line-height: 1.25;
-            color: var(--deep-red);
-            text-decoration: none;
-        }
-        a.prow-name { background: linear-gradient(var(--bright-orange), var(--bright-orange)) 0 100% / 0 2px no-repeat; transition: background-size 0.3s ease, color 0.2s ease; }
-        a.prow-name:hover { color: var(--bright-orange); background-size: 100% 2px; }
-        .prow-role { font-size: 0.9rem; color: var(--charcoal); opacity: 0.85; line-height: 1.45; margin-top: 2px; }
-        .prow-area { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.5px; color: var(--olive-bronze); white-space: nowrap; text-align: right; }
-        .prow-area.floating { font-weight: 500; font-style: italic; letter-spacing: 0; }
-
         /* ===== PEOPLE ===== */
         .people-intro {
             text-align: center;
@@ -829,7 +789,6 @@
             line-height: 1.75;
         }
 
-        /* the crew, written up like the wall menu: no headshots, no titles to live up to */
         .crew-board {
             max-width: 560px;
             margin: 0 auto;
@@ -845,28 +804,7 @@
         }
         .crew-role { font-weight: 700; font-size: 1.05rem; color: var(--bright-orange); white-space: nowrap; }
         .crew-list .mi-dots { top: -0.3em; font-size: 1.1rem; }
-        .crew-foot {
-            text-align: center;
-            margin-top: clamp(26px, 4vw, 36px);
-            font-style: italic;
-            font-weight: 500;
-            color: var(--olive-bronze);
-        }
-
-        /* ===== FOOTER ===== */
-        footer {
-            background: var(--charcoal);
-            color: var(--cream);
-            padding: 4rem 2rem 2.5rem;
-            text-align: center;
-            margin-top: clamp(20px, 4vw, 40px);
-        }
-        .footer-logo { font-family: var(--serif); font-size: 2rem; color: var(--gold); letter-spacing: 0.05em; line-height: 1.1; }
-        .footer-tagline { opacity: 0.7; margin: 0.4rem 0 1.6rem; letter-spacing: 3px; font-size: 0.95rem; }
-        .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.6rem 1.6rem; margin-bottom: 2rem; }
-        .footer-links a { color: var(--golden-sand); text-decoration: none; font-weight: 500; }
-        .footer-links a:hover { color: var(--gold); }
-        .footer-bottom { border-top: 1px solid rgba(237, 232, 224, 0.1); padding-top: 1.6rem; font-size: 0.82rem; opacity: 0.55; }
+        #people .container { padding-bottom: clamp(70px, 10vw, 130px); }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 960px) {
@@ -875,7 +813,7 @@
         }
 
         @media (max-width: 880px) {
-            .menu-boards, .connect-grid, .partner-groups { grid-template-columns: 1fr; }
+            .menu-boards, .connect-grid { grid-template-columns: 1fr; }
             .discord-band { grid-template-columns: 1fr; }
         }
 
@@ -957,9 +895,9 @@
                     <h1 class="landing-logo">Gratified</h1>
                     <p class="landing-logobot">coffee + art</p>
                     <svg class="landing-diamond" viewBox="0 0 100 100" aria-hidden="true">
-                        <!-- gold core, then the red ring drawn around it -->
-                        <rect class="diamond-core" x="22.25" y="22.25" width="55.5" height="55.5" fill="var(--gold)" transform="rotate(45 50 50)"/>
-                        <rect class="diamond-ring" x="22.25" y="22.25" width="55.5" height="55.5" fill="none" stroke="var(--deep-red)" stroke-width="15.2" stroke-linejoin="miter" transform="rotate(45 50 50)"/>
+                        <polygon class="diamond-solid" points="50,0 100,50 50,100 0,50" fill="var(--deep-red)"/>
+                        <polygon class="diamond-ring" points="50,10.75 89.25,50 50,89.25 10.75,50" pathLength="100" fill="none" stroke="var(--deep-red)" stroke-width="15.2" stroke-linejoin="miter"/>
+                        <polygon class="diamond-core" points="50,21.5 78.5,50 50,78.5 21.5,50" fill="var(--gold)"/>
                     </svg>
                 </div>
             </div>
@@ -969,8 +907,7 @@
         <section id="menu" aria-labelledby="menu-heading">
             <div class="container">
                 <div class="header">
-                    <h2 class="logo" id="menu-heading">Nourish</h2>
-                    <p class="tagline">our menu</p>
+                    <h2 class="logo" id="menu-heading">Menu</h2>
                 </div>
 
                 <div class="menu-boards">
@@ -1061,11 +998,10 @@
                     <article class="section fade-in" aria-labelledby="events-title">
                         <div class="card-head">
                             <h3 class="card-title" id="events-title">Events</h3>
-                            <p class="card-kicker">workshops, pop-ups + hangouts</p>
                         </div>
                         <h4 class="sub-label"><span class="gem" aria-hidden="true"></span>Upcoming</h4>
                         <div id="eventsUpcoming"></div>
-                        <h4 class="sub-label" id="recentLabel"><span class="gem" aria-hidden="true"></span>Recently</h4>
+                        <h4 class="sub-label" id="recentLabel"><span class="gem" aria-hidden="true"></span>Past</h4>
                         <div id="eventsRecent"></div>
                         <div class="card-foot">
                             <a class="btn ghost" id="partifulLink" href="#" target="_blank" rel="noopener">All events on Partiful</a>
@@ -1075,7 +1011,7 @@
                     <!-- Substack (loaded live) -->
                     <article class="section fade-in" aria-labelledby="substack-title">
                         <div class="card-head">
-                            <h3 class="card-title" id="substack-title">From the Substack</h3>
+                            <h3 class="card-title" id="substack-title">Substack</h3>
                             <p class="card-kicker">cafe philosophy</p>
                         </div>
                         <div id="substackPosts" aria-live="polite">
@@ -1096,14 +1032,14 @@
                 <!-- Discord -->
                 <div class="section discord-band fade-in">
                     <div>
-                        <h3 class="card-title">Join the Discord</h3>
-                        <p>Coordinate hangouts and keep up with what's brewing between visits.</p>
+                        <h3 class="card-title">Discord</h3>
+                        <p>Coordinate hangouts</p>
                         <p class="live" id="discordLive" aria-live="polite"></p>
                     </div>
-                    <a class="btn light" id="discordLink" href="#" target="_blank" rel="noopener">Join the Discord →</a>
+                    <a class="btn light" id="discordLink" href="#" target="_blank" rel="noopener">Join the Discord</a>
                 </div>
 
-                <p class="reach-out">Want to reach us directly? <a class="text-link" href="mailto:leah@gratified.com">leah@gratified.com</a></p>
+                <p class="reach-out">If you want to reach out directly, message <a class="text-link" href="mailto:leah@gratified.com">leah@gratified.com</a></p>
             </div>
         </section>
 
@@ -1111,8 +1047,7 @@
         <section id="partners" aria-labelledby="partners-heading">
             <div class="container">
                 <div class="header">
-                    <h2 class="logo" id="partners-heading">Collab</h2>
-                    <p class="tagline">our partners + where to find us</p>
+                    <h2 class="logo" id="partners-heading">Partners</h2>
                 </div>
 
                 <div class="partners-top">
@@ -1123,18 +1058,19 @@
                     </div>
 
                     <aside class="section find-us fade-in" aria-labelledby="findus-title">
-                        <h3 class="card-title" id="findus-title"><span class="home-gem" aria-hidden="true"></span>Find us</h3>
+                        <h3 class="card-title" id="findus-title"><span class="home-gem" aria-hidden="true"></span>Visit us</h3>
                         <address>
-                            <b>Lower level, SF Main Library</b><br>
-                            100 Larkin St, San Francisco<br>
-                            outside the Koret Auditorium
+                            <b>Lower Level</b><br>
+                            SF Main Library<br>
+                            100 Larkin St<br>
+                            San Francisco, CA
                         </address>
-                        <p class="open-status" id="openStatus"><span class="live-dot" aria-hidden="true"></span><span>Open whenever the library is</span></p>
+                        <p class="open-status" id="openStatus"><span class="live-dot" aria-hidden="true"></span><span>Open daily</span></p>
                         <table class="hours" id="hoursTable" aria-label="Hours">
                             <tbody></tbody>
                         </table>
-                        <p class="hours-note">We follow the library's hours, including holiday closures. Service during conferences whenever possible.</p>
-                        <p class="expect">Laptop chargers in the booths, comfy seats to curl up with a few chapters, and reliable service.</p>
+                        <p class="hours-note">We close 30 minutes before the library. Service during conferences whenever possible.</p>
+                        <p class="expect">Laptop chargers, pleasant seats to curl up on for some chapters, and reliable service.</p>
                         <div class="links">
                             <a id="homeDirections" href="#" target="_blank" rel="noopener">Directions →</a>
                             <a href="https://sfpl.org/locations/main-library" target="_blank" rel="noopener">Library hours →</a>
@@ -1142,22 +1078,6 @@
                     </aside>
                 </div>
 
-                <div class="partner-groups">
-                    <article class="section fade-in" aria-labelledby="pg-food">
-                        <div class="group-head" style="--pin: var(--deep-red)">
-                            <span class="swatch" aria-hidden="true"></span>
-                            <h3 class="card-title" id="pg-food">Food + drink</h3>
-                        </div>
-                        <ul class="partner-list" id="partnersFood"></ul>
-                    </article>
-                    <article class="section fade-in" aria-labelledby="pg-friends">
-                        <div class="group-head" style="--pin: var(--sage)">
-                            <span class="swatch" aria-hidden="true"></span>
-                            <h3 class="card-title" id="pg-friends">Friends + makers</h3>
-                        </div>
-                        <ul class="partner-list" id="partnersFriends"></ul>
-                    </article>
-                </div>
             </div>
         </section>
 
@@ -1165,34 +1085,21 @@
         <section id="people" aria-labelledby="people-heading">
             <div class="container">
                 <div class="header">
-                    <h2 class="logo" id="people-heading">Create</h2>
-                    <p class="tagline">who's behind the counter</p>
+                    <h2 class="logo" id="people-heading">People</h2>
                 </div>
-                <p class="people-intro fade-in">In December 2024 a shaman told Azmyth she would start a cafe called Gratified that served coffee and did art therapy. Leah took the prophecy seriously. Here's who's making it real.</p>
+                <p class="people-intro fade-in">In December 2024 a shaman lady told Azmyth she would start a cafe called Gratified that would serve coffee and do art therapy. The prophecy captured Leah's imagination and got her dreaming about renovating Starbucks for the next quarter century: Making a cafe franchise focused on collaboration instead of competition, healthy drinks instead of sugary rushes, and every location developed to be a unique fit for its community instead of always being the same. In April 2025 we bought the domain, investors pitched in, and a roadmap was put together.</p>
                 <div class="section crew-board fade-in">
                     <ul class="crew-list" id="crewList"></ul>
-                    <p class="crew-foot">Say hi next time you're downstairs.</p>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <footer>
-        <div class="footer-logo">Gratified</div>
-        <p class="footer-tagline">nourish · collab · create</p>
-        <div class="footer-links" id="footerLinks">
-            <a href="#menu">Menu</a>
-            <a href="#connect">Events</a>
-            <a href="#partners">Visit</a>
-            <a href="mailto:leah@gratified.com">leah@gratified.com</a>
-        </div>
-        <p class="footer-bottom">Lower level, SF Main Library · 100 Larkin St, San Francisco · © <span id="year">2026</span> Gratified</p>
-    </footer>
 
     <script>
     /* =====================================================================
-       EDIT ME: everything you'll want to update lives in this block.
+       EDIT ME: site content and settings
        ===================================================================== */
 
     const CONFIG = {
@@ -1211,51 +1118,48 @@
         discordInvite: 'UDRNAydqWf',
     };
 
-    // Events: add one line per event. The page sorts them into
-    // "Upcoming" and "Recently" by date on its own.
-    //   date: 'YYYY-MM-DD'   end: optional last day for multi-day events
+    // Events, one per line. Sorted into "Upcoming" and "Past" by date.
+    //   date: 'YYYY-MM-DD'   end: last day, for multi-day events (optional)
     const EVENTS = [
         { title: 'Winter Solstice', date: '2026-12-21', time: '4–5:30pm', where: '', url: 'https://partiful.com/e/ji3AXGQrFSi33SCtTqop' },
         // { title: 'Next thing', date: '2027-01-10', time: '6pm', where: 'Gratified', url: 'https://partiful.com/e/...' },
     ];
 
-    // Home base: the gold diamond on the map.
+    // Gold diamond on the map.
     const HOME = {
         name: 'SF Main Library',
-        role: 'Gratified is on the lower level, outside the Koret Auditorium',
+        role: 'Gratified, Lower Level',
         address: '100 Larkin St, San Francisco, CA 94102',
         lat: 37.7790026, lng: -122.4152718,
         placeId: 'ChIJHeWHyiiBhYARfenjbx6a_Ew',
     };
 
     // Partners.
-    //   kind: 'food'   -> red pin, "Food + drink" list
-    //   kind: 'friend' -> green pin, "Friends + makers" list
-    //   No lat/lng = "floating": listed, but no pin. Add lat/lng later and it gets one.
-    //   url (optional): makes the name a link when there's no pin to show.
+    //   kind: 'food'   -> red pin, "Food partners"
+    //   kind: 'friend' -> green pin, "Other partners"
+    //   No lat/lng = floating, not on the map. Add lat/lng to pin it.
     const PARTNERS = [
         {
             kind: 'food', name: 'Sextant Coffee Roasters',
-            role: 'Maiden Voyage espresso, sourced from Ethiopia',
+            role: 'Maiden Voyage, sourced from Ethiopia',
             area: 'Folsom St', address: '1415 Folsom St, San Francisco, CA 94103',
             lat: 37.7724716, lng: -122.4129614, placeId: 'ChIJg1s92Sd-j4ARTKJr-IhF_-Q',
         },
         {
             kind: 'food', name: 'Dandelion Chocolate',
-            role: 'Bean-to-bar chocolate for our hot chocolates',
+            role: 'Chocolate',
             area: '16th St factory', address: '2600 16th St, San Francisco, CA 94103',
             lat: 37.7656401, lng: -122.4126483, placeId: 'ChIJm1iH_qF_j4ARLC2W1AHKITA',
         },
         {
-            // Through the next 3–6 months while we look for a new bakery.
             kind: 'food', name: 'Arizmendi Bakery',
             role: 'Muffins + scones, fresh daily',
-            area: '9th Ave', address: '1331 9th Ave, San Francisco, CA 94122',
-            lat: 37.763405, lng: -122.4664416, placeId: 'ChIJMdUfNVyHhYAR7pvCohDZC70',
+            area: 'Valencia St', address: '1268 Valencia St, San Francisco, CA 94110',
+            lat: 37.7525761, lng: -122.4209225, placeId: 'ChIJ23T9gUB-j4ARr_BcUfXfh6M',
         },
         {
             kind: 'food', name: 'Peasant Pies',
-            role: 'A 30+ year SF favorite, behind our three hand pies',
+            role: '30+ year SF favorite, serving 3 types of pie',
             area: 'Irving St', address: '1039 Irving St, San Francisco, CA 94122',
             lat: 37.7637745, lng: -122.4691842, placeId: 'ChIJBUHEg12HhYARbpImXPQt384',
         },
@@ -1267,7 +1171,7 @@
         },
         {
             kind: 'food', name: 'Rainbow Grocery',
-            role: 'Our teas: hot tea blends, matcha + chai',
+            role: 'Tea selection: hot tea blends, matcha, chai',
             area: 'Folsom St', address: '1745 Folsom St, San Francisco, CA 94103',
             lat: 37.7692836, lng: -122.4147813, placeId: 'ChIJ0XsfYyZ-j4ARNE4pMC-q7UI',
         },
@@ -1279,29 +1183,34 @@
         },
         {
             kind: 'friend', name: 'Cushion Works',
-            role: 'Custom foam + cushions',
+            role: '',
             area: '18th St', address: '3320 18th St, San Francisco, CA 94110',
             lat: 37.7621625, lng: -122.4178192, placeId: 'ChIJnUtnWjt-j4AR49xpGu-vSgo',
         },
-        { kind: 'friend', name: 'odell.house',          role: '', url: '' },   // pin coming
-        { kind: 'friend', name: 'Cynthia Xi Design',    role: '', url: '' },
-        { kind: 'friend', name: 'Silas Photography',    role: '', url: '' },
+        { kind: 'friend', name: 'odell.house',          role: '' },
+        { kind: 'friend', name: 'Cynthia Xi Design',    role: '' },
+        { kind: 'friend', name: 'Silas Photography',    role: '' },
     ];
 
     const PIN_COLORS = { food: '#722F37', friend: '#4E7A51' };
 
-    // The crew, listed like the wall menu. Add a line to add someone.
     const PEOPLE = [
         { name: 'Azmyth',  role: 'co-founder' },
         { name: 'Leah',    role: 'co-founder' },
         { name: 'Betty',   role: 'co-founder' },
-        { name: 'Heather', role: 'first hire!' },
+        { name: 'Heather', role: 'first hire' },
     ];
 
-    // Main Library hours (the cafe follows them). 24h clock, [open, close].
-    // Sunday = 0. Source: sfpl.org. Holiday closures are not listed here.
+    // Cafe hours, 24h clock. We open with the library and close 30 minutes
+    // before it (library hours: sfpl.org). Sunday = 0.
     const HOURS = {
-        0: [12, 18], 1: [9, 18], 2: [9, 20], 3: [9, 20], 4: [9, 20], 5: [12, 18], 6: [10, 18],
+        0: ['12:00', '17:30'],
+        1: ['9:00',  '17:30'],
+        2: ['9:00',  '19:30'],
+        3: ['9:00',  '19:30'],
+        4: ['9:00',  '19:30'],
+        5: ['12:00', '17:30'],
+        6: ['10:00', '17:30'],
     };
 
     /* =====================================================================
@@ -1334,11 +1243,6 @@
         return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(timer));
     }
 
-    function mapsSearchUrl(p) {
-        const q = encodeURIComponent(`${p.name}, ${p.address}`);
-        return `https://www.google.com/maps/search/?api=1&query=${q}` + (p.placeId ? `&query_place_id=${p.placeId}` : '');
-    }
-
     function mapsDirectionsUrl(p) {
         const q = encodeURIComponent(`${p.name}, ${p.address}`);
         return `https://www.google.com/maps/dir/?api=1&destination=${q}` + (p.placeId ? `&destination_place_id=${p.placeId}` : '');
@@ -1352,14 +1256,6 @@
         document.getElementById('partifulLink').href = CONFIG.partifulUrl;
         document.getElementById('discordLink').href = `https://discord.gg/${CONFIG.discordInvite}`;
         document.getElementById('homeDirections').href = mapsDirectionsUrl(HOME);
-        document.getElementById('year').textContent = new Date().getFullYear();
-
-        const links = document.getElementById('footerLinks');
-        links.append(
-            el('a', { href: sub, target: '_blank', rel: 'noopener' }, 'Substack'),
-            el('a', { href: `https://discord.gg/${CONFIG.discordInvite}`, target: '_blank', rel: 'noopener' }, 'Discord'),
-            el('a', { href: CONFIG.partifulUrl, target: '_blank', rel: 'noopener' }, 'Partiful'),
-        );
     }
 
     // ---------- events ----------
@@ -1397,7 +1293,7 @@
         const rec = document.getElementById('eventsRecent');
         up.replaceChildren(upcoming.length
             ? el('ul', { class: 'event-list' }, upcoming.map(e => item(e, false)))
-            : el('p', { class: 'empty-note' }, 'Nothing posted just yet. Follow us on Partiful to hear about the next one.'));
+            : el('p', { class: 'empty-note' }, 'No upcoming events.'));
         rec.replaceChildren(recent.length ? el('ul', { class: 'event-list' }, recent.map(e => item(e, true))) : '');
         document.getElementById('recentLabel').hidden = !recent.length;
     }
@@ -1452,8 +1348,7 @@
         }
 
         box.replaceChildren(el('p', { class: 'empty-note' },
-            'Our latest writing lives on Substack. ',
-            el('a', { class: 'text-link', href: `${base}/archive`, target: '_blank', rel: 'noopener' }, 'Read them on Substack →')));
+            el('a', { class: 'text-link', href: `${base}/archive`, target: '_blank', rel: 'noopener' }, 'Read on Substack →')));
     }
 
     function renderPosts(box, posts) {
@@ -1481,7 +1376,7 @@
             if (!members) return;
             const live = document.getElementById('discordLive');
             live.replaceChildren(el('span', { class: 'live-dot', 'aria-hidden': 'true' }),
-                `${members} members${online ? ` · ${online} online now` : ''}`);
+                `${members} members${online ? ` · ${online} online` : ''}`);
         } catch (err) { /* button still works without the count */ }
     }
 
@@ -1494,9 +1389,17 @@
         return { day, minutes: Number(parts.hour) * 60 + Number(parts.minute) };
     }
 
-    function fmtHour(h) {
+    // '17:30' -> 1050 (minutes after midnight)
+    function toMinutes(t) {
+        const [h, m] = String(t).split(':').map(Number);
+        return h * 60 + (m || 0);
+    }
+
+    // 1050 -> '5:30pm', 540 -> '9am', 720 -> '12pm'
+    function fmtTime(mins) {
+        const h = Math.floor(mins / 60) % 24, m = mins % 60;
         const hr = h % 12 || 12;
-        return `${hr}${h < 12 || h === 24 ? 'am' : 'pm'}`;
+        return `${hr}${m ? ':' + String(m).padStart(2, '0') : ''}${h < 12 ? 'am' : 'pm'}`;
     }
 
     function renderHours() {
@@ -1507,23 +1410,24 @@
             const h = HOURS[d];
             return el('tr', { class: d === now.day ? 'today' : '' },
                 el('th', { scope: 'row' }, DAY_NAMES[d] + (d === now.day ? ' (today)' : '')),
-                el('td', {}, h ? `${fmtHour(h[0])} – ${fmtHour(h[1])}` : 'Closed'));
+                el('td', {}, h ? `${fmtTime(toMinutes(h[0]))} – ${fmtTime(toMinutes(h[1]))}` : 'Closed'));
         }));
 
         const status = document.getElementById('openStatus');
         const today = HOURS[now.day];
-        const isOpen = today && now.minutes >= today[0] * 60 && now.minutes < today[1] * 60;
+        const isOpen = !!today && now.minutes >= toMinutes(today[0]) && now.minutes < toMinutes(today[1]);
         let msg;
         if (isOpen) {
-            msg = `Open now · until ${fmtHour(today[1])}`;
+            msg = `Open now · until ${fmtTime(toMinutes(today[1]))}`;
         } else {
-            // next opening
             let label = '';
             for (let i = 0; i < 8; i++) {
                 const d = (now.day + i) % 7, h = HOURS[d];
                 if (!h) continue;
-                if (i === 0 && now.minutes >= h[0] * 60) continue;
-                label = i === 0 ? `today at ${fmtHour(h[0])}` : i === 1 ? `tomorrow at ${fmtHour(h[0])}` : `${DAY_NAMES[d]} at ${fmtHour(h[0])}`;
+                const opens = toMinutes(h[0]);
+                if (i === 0 && now.minutes >= opens) continue;
+                const at = fmtTime(opens);
+                label = i === 0 ? `today at ${at}` : i === 1 ? `tomorrow at ${at}` : `${DAY_NAMES[d]} at ${at}`;
                 break;
             }
             msg = `Closed · opens ${label}`;
@@ -1532,39 +1436,9 @@
         status.replaceChildren(el('span', { class: 'live-dot', 'aria-hidden': 'true' }), el('span', {}, msg));
     }
 
-    // ---------- partners list + map ----------
-    let focusOnMap = null;   // set once the interactive map is ready
+    // ---------- partners map ----------
     const isPinned = p => typeof p.lat === 'number' && typeof p.lng === 'number';
     const pinColor = p => PIN_COLORS[p.kind] || PIN_COLORS.food;
-
-    function renderPartnerList() {
-        const row = p => {
-            const pinned = isPinned(p);
-            let name;
-            if (pinned) {
-                name = el('a', {
-                    class: 'prow-name', href: mapsSearchUrl(p), target: '_blank', rel: 'noopener',
-                    title: 'Show on map',
-                    onclick: e => {
-                        if (!focusOnMap) return;          // no interactive map: open Google Maps
-                        e.preventDefault();
-                        focusOnMap(p);
-                    },
-                }, p.name);
-            } else if (p.url) {
-                name = el('a', { class: 'prow-name', href: p.url, target: '_blank', rel: 'noopener' }, p.name);
-            } else {
-                name = el('span', { class: 'prow-name' }, p.name);
-            }
-            return el('li', { class: 'prow', style: `--pin:${pinColor(p)}` },
-                el('span', { class: 'swatch' + (pinned ? '' : ' floating'), 'aria-hidden': 'true' }),
-                el('div', {}, name, p.role && el('p', { class: 'prow-role' }, p.role)),
-                el('span', { class: 'prow-area' + (pinned ? '' : ' floating') }, pinned ? p.area : 'floating'),
-            );
-        };
-        document.getElementById('partnersFood').replaceChildren(...PARTNERS.filter(p => p.kind === 'food').map(row));
-        document.getElementById('partnersFriends').replaceChildren(...PARTNERS.filter(p => p.kind !== 'food').map(row));
-    }
 
     // Plain map of the library, used when there's no key or the full map can't load.
     function renderMapFallback() {
@@ -1578,7 +1452,6 @@
             title: 'Map: Gratified at the SF Main Library',
             src, loading: 'lazy', referrerpolicy: 'no-referrer-when-downgrade', allowfullscreen: true,
         }));
-        focusOnMap = null;
     }
 
     function loadPartnerMap() {
@@ -1615,7 +1488,6 @@
 
         const info = new InfoWindow();
         const bounds = new google.maps.LatLngBounds();
-        const byPartner = new window.Map();
         let openPin = null;
 
         const card = p => el('div', { class: 'map-info' },
@@ -1638,27 +1510,17 @@
             };
             marker.addListener('click', open);
             bounds.extend({ lat: p.lat, lng: p.lng });
-            return { marker, open };
         };
 
         place(HOME, true);
-        PARTNERS.filter(isPinned).forEach(p => byPartner.set(p, place(p, false)));
+        PARTNERS.filter(isPinned).forEach(p => place(p, false));
         info.addListener('closeclick', () => openPin?.classList.remove('is-open'));
         map.fitBounds(bounds, 48);
 
         document.getElementById('mapFrame').append(el('div', { class: 'map-legend', 'aria-hidden': 'true' },
             el('span', {}, el('i', { class: 'home' }), 'SF Main Library'),
-            el('span', {}, el('i', { style: `--pin:${PIN_COLORS.food}` }), 'food + drink'),
-            el('span', {}, el('i', { style: `--pin:${PIN_COLORS.friend}` }), 'friends + makers')));
-
-        focusOnMap = p => {
-            const target = byPartner.get(p);
-            if (!target) return;
-            map.panTo(target.marker.position);
-            if (map.getZoom() < 14) map.setZoom(14);
-            target.open();
-            document.getElementById('mapFrame').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        };
+            el('span', {}, el('i', { style: `--pin:${PIN_COLORS.food}` }), 'food partners'),
+            el('span', {}, el('i', { style: `--pin:${PIN_COLORS.friend}` }), 'other partners')));
     }
 
     // ---------- people ----------
@@ -1718,7 +1580,6 @@
     wireLinks();
     renderEvents();
     renderHours();
-    renderPartnerList();
     renderPeople();
     observeFadeIns();
     updateActiveNav();
