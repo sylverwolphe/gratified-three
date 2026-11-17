@@ -815,36 +815,27 @@
             line-height: 1.8;
         }
 
-        .people-row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: flex-start;
-            gap: clamp(28px, 4vw, 52px);
-            margin-top: calc(-1 * clamp(8px, 2vw, 20px));
-        }
-        .people-text { flex: 1 1 360px; max-width: 540px; }
-
-        /* phones: story, then picture, then names, so tapping a name shows its photo right above */
-        @media (max-width: 760px) {
-            .people-row { flex-direction: column; align-items: stretch; gap: 0; }
-            .people-text { display: contents; }
-            .people-intro { order: 1; }
-            .portrait-frame { order: 2; align-self: center; margin-bottom: 24px; }
-            .crew-board { order: 3; }
+        /* story, names, then the slideshow, in one centred column */
+        .people-col {
+            max-width: 560px;
+            margin: calc(-1 * clamp(8px, 2vw, 20px)) auto 0;
         }
 
-        .portrait-frame {
+        .slideshow {
+            width: min(100%, 420px);
+            margin: clamp(40px, 6vw, 64px) auto 0;
+        }
+        .slideshow[hidden] { display: none; }
+
+        .slide-frame {
             position: relative;
-            flex: none;
-            width: min(100%, 340px);
             aspect-ratio: 1 / 1;
             margin: 0;
             border: 3px solid var(--deep-red);
             overflow: hidden;
             background: var(--golden-sand);
         }
-        .portrait-frame::before {
+        .slide-frame::before {
             content: '';
             position: absolute; inset: 8px;
             border: 1px solid var(--cream);
@@ -852,15 +843,15 @@
             pointer-events: none;
             z-index: 5;
         }
-        .portrait-frame img {
+        .slide-frame img {
             position: absolute; inset: 0;
             width: 100%; height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 0.12s ease;
+            transition: opacity 0.8s ease;
         }
-        .portrait-frame img.active { opacity: 1; }
-        .portrait-frame figcaption {
+        .slide-frame img.active { opacity: 1; }
+        .slide-frame figcaption {
             position: absolute; left: 0; right: 0; bottom: 0;
             z-index: 6;
             padding: 1.6rem 1rem 0.9rem;
@@ -871,6 +862,24 @@
             letter-spacing: 2px;
             text-transform: lowercase;
         }
+
+        .slide-dots { display: flex; justify-content: center; margin-top: 8px; }
+        .slide-dots[hidden] { display: none; }
+        .slide-dots button {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0; border: 0; background: none;
+            cursor: pointer;
+        }
+        .slide-dots button::before {
+            content: '';
+            width: 9px; height: 9px;
+            transform: rotate(45deg);
+            border: 1.5px solid var(--deep-red);
+            transition: background-color 0.2s ease;
+        }
+        .slide-dots button:hover::before { background: rgba(114, 47, 55, 0.3); }
+        .slide-dots button[aria-current="true"]::before { background: var(--deep-red); }
 
         .crew-board {
             margin: 0;
@@ -1172,15 +1181,16 @@
                 <div class="header">
                     <h2 class="logo" id="people-heading">People</h2>
                 </div>
-                <div class="people-row">
-                    <figure class="portrait-frame fade-in" id="portraitFrame" hidden>
-                        <figcaption id="portraitCaption"></figcaption>
-                    </figure>
-                    <div class="people-text">
-                        <p class="people-intro fade-in">In December 2024 a shaman lady told Azmyth she would start a cafe called Gratified that would serve coffee and do art therapy. The prophecy captured Leah's imagination and got her dreaming about renovating Starbucks for the next quarter century: Making a cafe franchise focused on collaboration instead of competition, healthy drinks instead of sugary rushes, and every location developed to be a unique fit for its community instead of always being the same. In April 2025 we bought the domain, investors pitched in, and a roadmap was put together.</p>
-                        <div class="section crew-board fade-in">
-                            <ul class="crew-list" id="crewList"></ul>
-                        </div>
+                <div class="people-col">
+                    <p class="people-intro fade-in">In December 2024 a shaman lady told Azmyth she would start a cafe called Gratified that would serve coffee and do art therapy. The prophecy captured Leah's imagination and got her dreaming about renovating Starbucks for the next quarter century: Making a cafe franchise focused on collaboration instead of competition, healthy drinks instead of sugary rushes, and every location developed to be a unique fit for its community instead of always being the same. In April 2025 we bought the domain, investors pitched in, and a roadmap was put together.</p>
+                    <div class="section crew-board fade-in">
+                        <ul class="crew-list" id="crewList"></ul>
+                    </div>
+                    <div class="slideshow fade-in" id="slideshow" role="region" aria-roledescription="slideshow" aria-label="Photos" hidden>
+                        <figure class="slide-frame" id="slideFrame">
+                            <figcaption id="slideCaption"></figcaption>
+                        </figure>
+                        <div class="slide-dots" id="slideDots"></div>
                     </div>
                 </div>
             </div>
@@ -1306,9 +1316,16 @@
         { featureType: 'water', elementType: 'labels', stylers: [{ visibility: 'off' }] },
     ];
 
-    // People. The drawing shows by default; hovering (or tapping) a name
-    // with a photo swaps it in. Image files sit next to index.html.
-    const PORTRAIT = { image: 'azmyth-leah-drawings.jpeg', caption: 'azmyth and leah', alt: 'Drawing of Azmyth and Leah' };
+    // Slideshow at the end of People, one line per picture.
+    // Image files sit next to index.html.
+    const SLIDES = [
+        { src: 'azmyth-leah-drawings.jpeg', caption: 'azmyth and leah', alt: 'Drawing of Azmyth and Leah' },
+        { src: 'azmyth.jpeg',               caption: 'azmyth',          alt: 'Photo of Azmyth' },
+        { src: 'leah.jpg',                  caption: 'leah',            alt: 'Photo of Leah' },
+    ];
+    const SLIDE_SECONDS = 4;
+
+    // People. "photo" matches a slide: hovering (or tapping) the name shows it.
     const PEOPLE = [
         { name: 'Azmyth',  role: 'co-founder', photo: 'azmyth.jpeg' },
         { name: 'Leah',    role: 'co-founder', photo: 'leah.jpg' },
@@ -1665,54 +1682,93 @@
             el('span', {}, el('i', { style: `--pin:${PIN_COLORS.friend}` }), 'other partners')));
     }
 
+    // ---------- slideshow ----------
+    // Returns show(src) / resume() so the names in People can drive it.
+    function renderSlideshow() {
+        const box = document.getElementById('slideshow');
+        const frame = document.getElementById('slideFrame');
+        const caption = document.getElementById('slideCaption');
+        const dots = document.getElementById('slideDots');
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let slides = [];
+        let index = 0, timer = null, inView = false, held = false, userChose = false;
+
+        const go = i => {
+            if (!slides.length) return;
+            index = (i + slides.length) % slides.length;
+            slides.forEach((sl, k) => {
+                sl.img.classList.toggle('active', k === index);
+                sl.dot.setAttribute('aria-current', k === index ? 'true' : 'false');
+            });
+            caption.textContent = slides[index].caption;
+        };
+        const stop = () => { clearInterval(timer); timer = null; };
+        const play = () => {
+            stop();
+            if (reduceMotion || userChose || held || !inView || slides.length < 2) return;
+            timer = setInterval(() => go(index + 1), SLIDE_SECONDS * 1000);
+        };
+        const refreshDots = () => { dots.hidden = slides.length < 2; };
+
+        slides = SLIDES.map(def => {
+            const sl = { ...def };
+            sl.img = el('img', { src: def.src, alt: def.alt || '', decoding: 'async' });
+            sl.dot = el('button', {
+                type: 'button', 'aria-label': `Show ${def.caption || def.alt || 'photo'}`,
+                onclick: () => { userChose = true; stop(); go(slides.indexOf(sl)); },
+            });
+            sl.img.addEventListener('load', () => { box.hidden = false; play(); });
+            sl.img.addEventListener('error', () => {
+                const current = slides[index];
+                slides = slides.filter(x => x !== sl);
+                sl.img.remove(); sl.dot.remove();
+                if (!slides.length) { box.hidden = true; stop(); return; }
+                go(Math.max(0, slides.indexOf(current)));
+                refreshDots(); play();
+                document.dispatchEvent(new CustomEvent('slide-removed', { detail: def.src }));
+            });
+            frame.insertBefore(sl.img, caption);
+            dots.append(sl.dot);
+            return sl;
+        });
+        refreshDots();
+        go(0);
+
+        // pause while hovered or focused, and while off screen
+        box.addEventListener('mouseenter', () => { held = true; stop(); });
+        box.addEventListener('mouseleave', () => { held = false; play(); });
+        box.addEventListener('focusin', () => { held = true; stop(); });
+        box.addEventListener('focusout', () => { held = false; play(); });
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(entries => { inView = entries.some(e => e.isIntersecting); inView ? play() : stop(); },
+                { threshold: 0.3 }).observe(box);
+        } else { inView = true; play(); }
+
+        return {
+            has: src => slides.some(sl => sl.src === src),
+            show: src => { const k = slides.findIndex(sl => sl.src === src); if (k < 0) return; held = true; stop(); go(k); },
+            resume: () => { held = false; play(); },
+        };
+    }
+
     // ---------- people ----------
-    function renderPeople() {
-        const frame = document.getElementById('portraitFrame');
-        const caption = document.getElementById('portraitCaption');
+    function renderPeople(slideshow) {
         const canHover = window.matchMedia('(hover: hover)').matches;
-        const shots = [];          // { key, img, caption }
-        let showing = 'base';
-
-        const addShot = (key, src, alt, text) => {
-            const img = el('img', { src, alt, decoding: 'async' });
-            frame.insertBefore(img, caption);
-            const shot = { key, img, caption: text };
-            shots.push(shot);
-            return shot;
-        };
-        const show = key => {
-            const shot = shots.find(x => x.key === key) || shots[0];
-            showing = shot.key;
-            shots.forEach(x => x.img.classList.toggle('active', x === shot));
-            caption.textContent = shot.caption;
-        };
-
-        // the drawing: if it's missing, hide the frame
-        const base = addShot('base', PORTRAIT.image, PORTRAIT.alt, PORTRAIT.caption);
-        const reveal = () => { frame.hidden = false; };
-        base.img.addEventListener('load', reveal, { once: true });
-        base.img.addEventListener('error', () => { frame.hidden = true; });
-        if (base.img.complete && base.img.naturalWidth) reveal();
-
-        document.getElementById('crewList').replaceChildren(...PEOPLE.map((p, i) => {
+        document.getElementById('crewList').replaceChildren(...PEOPLE.map(p => {
             let name = el('span', { class: 'crew-name' }, p.name);
-            if (p.photo) {
-                const key = `p${i}`;
-                const shot = addShot(key, p.photo, `Photo of ${p.name}`, p.name.toLowerCase());
+            if (p.photo && SLIDES.some(sl => sl.src === p.photo)) {
                 name = el('button', {
                     type: 'button', class: 'crew-name',
-                    onmouseenter: () => canHover && show(key),
-                    onmouseleave: () => canHover && show('base'),
-                    // keyboard focus on desktop; on touch screens a tap toggles instead
-                    onfocus: () => canHover && show(key),
-                    onblur: () => canHover && show('base'),
-                    onclick: () => { if (!canHover) show(showing === key ? 'base' : key); },
+                    onmouseenter: () => canHover && slideshow.show(p.photo),
+                    onmouseleave: () => canHover && slideshow.resume(),
+                    onfocus: () => canHover && slideshow.show(p.photo),
+                    onblur: () => canHover && slideshow.resume(),
+                    // touch screens: tap shows the photo, then the slideshow carries on
+                    onclick: () => { if (!canHover) { slideshow.show(p.photo); slideshow.resume(); } },
                 }, p.name);
-                // photo missing: drop it and keep the name as plain text
-                shot.img.addEventListener('error', () => {
-                    shots.splice(shots.indexOf(shot), 1);
-                    shot.img.remove();
-                    name.replaceWith(el('span', { class: 'crew-name' }, p.name));
+                // photo missing: keep the name as plain text
+                document.addEventListener('slide-removed', e => {
+                    if (e.detail === p.photo && name.isConnected) name.replaceWith(el('span', { class: 'crew-name' }, p.name));
                 });
             }
             return el('li', {}, el('div', { class: 'mi-row' },
@@ -1720,21 +1776,6 @@
                 el('span', { class: 'mi-dots', 'aria-hidden': 'true' }),
                 el('span', { class: 'crew-role' }, p.role)));
         }));
-
-        // hovering the frame steps through the photos, then back to the drawing
-        let timer = null;
-        frame.addEventListener('mouseenter', () => {
-            const seq = shots.filter(x => x.key !== 'base').map(x => x.key).concat('base');
-            let step = 0;
-            clearInterval(timer);
-            timer = setInterval(() => {
-                if (step < seq.length) show(seq[step++]);
-                else { clearInterval(timer); timer = null; }
-            }, 640);
-        });
-        frame.addEventListener('mouseleave', () => { clearInterval(timer); timer = null; show('base'); });
-
-        show('base');
     }
 
     // ---------- nav active state ----------
@@ -1785,7 +1826,7 @@
     wireLinks();
     renderEvents();
     renderHours();
-    renderPeople();
+    renderPeople(renderSlideshow());
     renderFloating();
     observeFadeIns();
     updateActiveNav();
